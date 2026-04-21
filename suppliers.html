@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة الموردين</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B4FE8;--primary-light:#7B72F0;--primary-xlight:#EEF0FF;--primary-dark:#3D34C4;
+  --bg:#F5F6FA;--white:#FFFFFF;--text-dark:#1A1A2E;--text-mid:#4A5568;--text-gray:#8892A4;
+  --border:#E8EAF0;--success:#22C55E;--success-light:#DCFCE7;--danger:#EF4444;--danger-light:#FEE2E2;
+  --warning:#F59E0B;--warning-light:#FEF3C7;--info:#3B82F6;--info-light:#DBEAFE;
+  --orange:#F97316;--orange-light:#FFEDD5;
+  --sidebar-w:260px;--shadow-sm:0 1px 3px rgba(91,79,232,.08);--shadow-md:0 4px 16px rgba(91,79,232,.12);
+  --shadow-lg:0 8px 32px rgba(91,79,232,.18);--radius:12px;--radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text-dark);min-height:100vh;display:flex;}
+
+.sidebar{width:var(--sidebar-w);background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;bottom:0;z-index:100;box-shadow:var(--shadow-md);}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-icon{width:38px;height:38px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:15px;flex-shrink:0;}
+.logo-name{font-weight:800;font-size:13px;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}
+.logo-sub{font-size:10px;color:var(--text-gray);}
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 0;}
+.nav-section{padding:8px 16px 3px;font-size:10px;font-weight:700;color:var(--text-gray);letter-spacing:.5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;color:var(--text-mid);position:relative;}
+.nav-item:hover{background:var(--primary-xlight);color:var(--primary);}
+.nav-item.active{background:var(--primary-xlight);color:var(--primary);font-weight:700;}
+.nav-item.active::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;background:var(--primary);border-radius:3px 0 0 3px;}
+.nav-item i{width:18px;text-align:center;font-size:14px;}
+.nav-badge{margin-right:auto;background:var(--primary);color:white;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:700;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;}
+
+.main{margin-right:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-gray);}
+.breadcrumb span{color:var(--text-dark);font-weight:600;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.db-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-gray);padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:20px;}
+.db-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--primary);color:white;}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.btn-success{background:var(--success);color:white;}
+.btn-success:hover{background:#16A34A;}
+.btn-warning{background:var(--warning);color:white;}
+.btn-warning:hover{background:#D97706;}
+.btn-orange{background:var(--orange);color:white;}
+.btn-orange:hover{background:#EA6A00;}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:var(--primary-xlight);}
+.btn-ghost{background:var(--bg);color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--border);}
+.btn-soft-danger{background:var(--danger-light);color:var(--danger);border:1px solid #FECACA;}
+.btn-soft-danger:hover{background:var(--danger);color:white;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-icon{padding:6px;width:30px;height:30px;justify-content:center;}
+
+.content{padding:22px;flex:1;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;animation:fadeInDown .4s ease;}
+.page-title{display:flex;align-items:center;gap:12px;}
+.page-title-icon{width:42px;height:42px;background:var(--orange);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:17px;}
+.page-title h1{font-size:19px;font-weight:800;}
+.page-title p{font-size:11px;color:var(--text-gray);margin-top:1px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;animation:fadeInDown .4s ease .05s both;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-sm);transition:all .2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.stat-val{font-size:20px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text-gray);font-weight:600;margin-top:2px;}
+
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:320px 1fr;gap:16px;animation:fadeInUp .4s ease .1s both;}
+
+/* SUPPLIER LIST */
+.sup-list-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100vh - 240px);}
+.panel-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.panel-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;}
+.panel-title i{color:var(--orange);}
+.search-wrap{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.search-wrap input{width:100%;padding:7px 32px 7px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:12px;background:var(--bg);outline:none;transition:all .2s;}
+.search-wrap input:focus{border-color:var(--primary);background:var(--white);}
+.search-wrap-inner{position:relative;}
+.search-wrap-inner i{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--text-gray);font-size:12px;}
+.sup-list-body{flex:1;overflow-y:auto;}
+
+/* SUPPLIER ITEM */
+.sup-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .2s;position:relative;}
+.sup-item:hover{background:var(--primary-xlight);}
+.sup-item.selected{background:var(--primary-xlight);border-right:3px solid var(--primary);}
+.sup-item:last-child{border-bottom:none;}
+.sup-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:white;flex-shrink:0;}
+.sup-item-name{font-size:13px;font-weight:700;color:var(--text-dark);}
+.sup-item-code{font-size:10px;font-weight:700;color:var(--primary);direction:ltr;}
+.sup-item-balance{font-size:12px;font-weight:800;}
+.sup-item-actions{display:none;gap:3px;margin-right:auto;}
+.sup-item:hover .sup-item-actions,.sup-item.selected .sup-item-actions{display:flex;}
+
+/* DETAIL PANEL */
+.detail-main{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100vh - 240px);}
+
+/* SUP HERO */
+.sup-hero{padding:18px 20px;position:relative;overflow:hidden;}
+.sup-hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--orange),#F97316);opacity:.95;}
+.sup-hero::after{content:'';position:absolute;top:-30px;left:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.06);}
+.sup-hero-content{position:relative;z-index:1;display:flex;align-items:center;gap:14px;}
+.sup-hero-avatar{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white;flex-shrink:0;}
+.sup-hero-name{font-size:17px;font-weight:800;color:white;}
+.sup-hero-code{font-size:11px;color:rgba(255,255,255,.8);direction:ltr;}
+.sup-hero-meta{font-size:11px;color:rgba(255,255,255,.7);}
+
+/* BALANCE STRIP */
+.balance-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
+.bs-item{padding:12px 14px;text-align:center;border-left:1px solid var(--border);}
+.bs-item:last-child{border-left:none;}
+.bs-val{font-size:15px;font-weight:800;margin-bottom:2px;}
+.bs-lbl{font-size:10px;color:var(--text-gray);font-weight:600;}
+
+/* TABS */
+.detail-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;}
+.dtab{padding:10px 16px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;color:var(--text-gray);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px;}
+.dtab:hover{color:var(--primary);}
+.dtab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.detail-body{flex:1;overflow-y:auto;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--bg);padding:9px 13px;text-align:right;font-weight:700;font-size:11px;color:var(--text-gray);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:5;}
+td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text-dark);vertical-align:middle;}
+tr:hover td{background:#FAFBFF;}
+tr:last-child td{border-bottom:none;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;}
+.modal{background:var(--white);border-radius:var(--radius);width:580px;max-width:96vw;box-shadow:var(--shadow-lg);animation:modalIn .25s ease;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-lg{width:740px;}
+.modal-sm{width:420px;}
+.modal-header{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.modal-close{width:30px;height:30px;border-radius:7px;border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-gray);font-size:14px;transition:all .2s;}
+.modal-close:hover{background:var(--danger-light);color:var(--danger);}
+.modal-body{padding:18px;overflow-y:auto;flex:1;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr;}
+.full{grid-column:1/-1;}
+label{font-size:11px;font-weight:700;color:var(--text-mid);}
+label .req{color:var(--danger);}
+input,select,textarea{font-family:'Cairo',sans-serif;font-size:13px;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-dark);transition:all .2s;outline:none;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(91,79,232,.1);}
+textarea{resize:vertical;min-height:65px;}
+.input-prefix{display:flex;align-items:stretch;}
+.prefix-label{background:var(--primary-xlight);border:1.5px solid var(--border);border-left:none;padding:0 10px;font-size:12px;font-weight:700;color:var(--primary);display:flex;align-items:center;border-radius:0 var(--radius-sm) var(--radius-sm) 0;white-space:nowrap;}
+.prefix-input{border-radius:var(--radius-sm) 0 0 var(--radius-sm)!important;flex:1;}
+
+/* SECTION */
+.section-title{font-size:11px;font-weight:700;color:var(--text-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-p{background:var(--primary-xlight);color:var(--primary);}
+.badge-g{background:var(--success-light);color:#16A34A;}
+.badge-o{background:var(--orange-light);color:var(--orange);}
+.badge-r{background:var(--danger-light);color:var(--danger);}
+.badge-b{background:var(--info-light);color:#1D4ED8;}
+.badge-w{background:var(--warning-light);color:#92400E;}
+
+/* INFO BOX */
+.info-box{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:12px;}
+.info-box.warn{background:var(--warning-light);color:#92400E;border:1px solid #FDE68A;}
+.info-box.info{background:var(--info-light);color:#1D4ED8;border:1px solid #BFDBFE;}
+.info-box.danger{background:var(--danger-light);color:#991B1B;border:1px solid #FECACA;}
+.info-box.success{background:var(--success-light);color:#166534;border:1px solid #BBF7D0;}
+
+/* EMPTY */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:12px;text-align:center;color:var(--text-gray);}
+.empty-icon{width:64px;height:64px;background:var(--primary-xlight);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--primary);}
+
+/* STATUS COLORS */
+.inv-paid{background:var(--success-light);color:#16A34A;}
+.inv-partial{background:var(--warning-light);color:#92400E;}
+.inv-unpaid{background:var(--danger-light);color:var(--danger);}
+
+/* PROGRESS */
+.progress-bar{height:6px;background:var(--border);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:10px;transition:width .5s;}
+
+/* FILTER BAR */
+.filter-bar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);}
+.filter-select{padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:12px;background:var(--white);color:var(--text-dark);outline:none;cursor:pointer;}
+.filter-select:focus{border-color:var(--primary);}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.toast{background:var(--text-dark);color:white;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-lg);animation:toastIn .3s ease;min-width:200px;justify-content:center;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+.toast.warning{background:var(--warning);color:var(--text-dark);}
+
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary-light)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon" id="sLogoIcon">م</div>
+    <div><div class="logo-name" id="sCompanyName">اسم الشركة</div><div class="logo-sub">نظام إدارة المشاريع</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">الرئيسية</div>
+    <div class="nav-item"><i class="fas fa-chart-pie"></i> لوحة التحكم</div>
+    <div class="nav-section">إدارة المشاريع</div>
+    <div class="nav-item"><i class="fas fa-folder-open"></i> المشاريع</div>
+    <div class="nav-item"><i class="fas fa-tasks"></i> المهام</div>
+    <div class="nav-item"><i class="fas fa-sitemap"></i> الفئات</div>
+    <div class="nav-section">المالية</div>
+    <div class="nav-item"><i class="fas fa-briefcase"></i> العهد المالية</div>
+    <div class="nav-item"><i class="fas fa-cash-register"></i> الخزنة</div>
+    <div class="nav-item"><i class="fas fa-file-invoice-dollar"></i> المستخلصات</div>
+    <div class="nav-section">الأطراف</div>
+    <div class="nav-item active"><i class="fas fa-truck"></i> الموردين <span class="nav-badge">هنا</span></div>
+    <div class="nav-item"><i class="fas fa-handshake"></i> العملاء</div>
+    <div class="nav-item"><i class="fas fa-hard-hat"></i> المشرفين</div>
+    <div class="nav-section">المخازن</div>
+    <div class="nav-item"><i class="fas fa-warehouse"></i> المخازن</div>
+    <div class="nav-item"><i class="fas fa-exchange-alt"></i> التحويلات</div>
+    <div class="nav-section">الإعدادات</div>
+    <div class="nav-item"><i class="fas fa-cog"></i> الإعدادات العامة</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar">أ</div>
+    <div><div style="font-size:12px;font-weight:700;">المدير العام</div><div style="font-size:10px;color:var(--text-gray);">أدمن النظام</div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      <i class="fas fa-home"></i> الرئيسية <i class="fas fa-chevron-left"></i> <span>إدارة الموردين</span>
+    </div>
+    <div class="topbar-right">
+      <div class="db-status"><div class="db-dot"></div> IndexedDB</div>
+      <button class="btn btn-ghost btn-sm" onclick="openInvoiceModal(null)"><i class="fas fa-file-invoice"></i> فاتورة جديدة</button>
+      <button class="btn btn-success btn-sm" onclick="openPaymentModal(null)"><i class="fas fa-money-bill"></i> دفعة جديدة</button>
+      <button class="btn btn-orange" onclick="openSupplierModal(null)"><i class="fas fa-plus"></i> مورد جديد</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- HEADER -->
+    <div class="page-header">
+      <div class="page-title">
+        <div class="page-title-icon"><i class="fas fa-truck"></i></div>
+        <div><h1>إدارة الموردين</h1><p>فواتير الشراء، المدفوعات، وكشف الحساب لكل مورد</p></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon" style="background:var(--orange-light);color:var(--orange);"><i class="fas fa-truck"></i></div><div><div class="stat-val" id="stSuppliers">0</div><div class="stat-lbl">إجمالي الموردين</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--danger-light);color:var(--danger);"><i class="fas fa-file-invoice"></i></div><div><div class="stat-val" id="stInvoices">0</div><div class="stat-lbl">فاتورة شراء</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--primary-xlight);color:var(--primary);"><i class="fas fa-coins"></i></div><div><div class="stat-val" id="stTotalInv">0</div><div class="stat-lbl">إجمالي الفواتير (ج.م)</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--success-light);color:var(--success);"><i class="fas fa-check-circle"></i></div><div><div class="stat-val" id="stTotalPaid">0</div><div class="stat-lbl">إجمالي المدفوع (ج.م)</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--warning-light);color:var(--warning);"><i class="fas fa-clock"></i></div><div><div class="stat-val" id="stTotalDue">0</div><div class="stat-lbl">إجمالي المستحق (ج.م)</div></div></div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+      <!-- LEFT: SUPPLIER LIST -->
+      <div class="sup-list-panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-truck"></i> الموردين</div>
+          <div style="display:flex;gap:5px;">
+            <select class="filter-select" id="fSupCat" onchange="renderSupplierList()" style="font-size:11px;padding:4px 8px;">
+              <option value="">الكل</option>
+              <option value="materials">مواد</option>
+              <option value="equipment">معدات</option>
+              <option value="services">خدمات</option>
+              <option value="other">أخرى</option>
+            </select>
+            <button class="btn btn-icon btn-ghost btn-sm" onclick="openSupplierModal(null)" title="مورد جديد"><i class="fas fa-plus" style="color:var(--orange);font-size:12px;"></i></button>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <div class="search-wrap-inner">
+            <input type="text" id="supSearch" placeholder="بحث في الموردين..." oninput="renderSupplierList()">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        <div class="sup-list-body" id="supplierListBody"></div>
+      </div>
+
+      <!-- RIGHT: DETAIL -->
+      <div class="detail-main" id="detailMain">
+        <div class="empty-state" id="detailEmpty">
+          <div class="empty-icon"><i class="fas fa-hand-pointer"></i></div>
+          <div style="font-size:14px;font-weight:700;color:var(--text-mid);">اختر مورداً</div>
+          <div style="font-size:12px;max-width:210px;line-height:1.7;">اضغط على أي مورد من القائمة لعرض فواتيره ومدفوعاته وكشف حسابه</div>
+          <button class="btn btn-orange" onclick="openSupplierModal(null)"><i class="fas fa-plus"></i> مورد جديد</button>
+        </div>
+        <div id="detailContent" style="display:none;flex-direction:column;height:100%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIER MODAL -->
+<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="supModalTitle"><i class="fas fa-truck" style="color:var(--orange);"></i> مورد جديد</div>
+      <button class="modal-close" onclick="closeSupplierModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="supEditId">
+      <div class="form-grid">
+        <div class="form-group full"><label>اسم المورد <span class="req">*</span></label><input type="text" id="supName" placeholder="الاسم التجاري للمورد"></div>
+        <div class="form-group"><label>الكود</label><input type="text" id="supCode" readonly style="direction:ltr;font-weight:700;color:var(--primary);background:var(--primary-xlight);"></div>
+        <div class="form-group"><label>نوع المورد</label>
+          <select id="supCategory">
+            <option value="materials">مواد بناء</option>
+            <option value="equipment">معدات وآليات</option>
+            <option value="services">خدمات</option>
+            <option value="subcontractor">مقاول باطن</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="form-group"><label>تليفون</label><input type="tel" id="supPhone" placeholder="01xxxxxxxxx"></div>
+        <div class="form-group"><label>بريد إلكتروني</label><input type="email" id="supEmail" placeholder="info@supplier.com"></div>
+        <div class="form-group"><label>الشخص المسؤول</label><input type="text" id="supContact" placeholder="اسم المندوب"></div>
+        <div class="form-group"><label>الرقم الضريبي</label><input type="text" id="supTax" placeholder="الرقم الضريبي"></div>
+        <div class="form-group"><label>رصيد افتتاحي (علينا)</label>
+          <div class="input-prefix"><input type="number" id="supOpenBal" class="prefix-input" placeholder="0.00" min="0"><span class="prefix-label">ج.م</span></div>
+        </div>
+        <div class="form-group"><label>لون الأفاتار</label>
+          <select id="supColor">
+            <option value="#F97316">برتقالي</option><option value="#5B4FE8">بنفسجي</option>
+            <option value="#22C55E">أخضر</option><option value="#EF4444">أحمر</option>
+            <option value="#3B82F6">أزرق</option><option value="#F59E0B">أصفر</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>العنوان</label><input type="text" id="supAddress" placeholder="عنوان المورد"></div>
+        <div class="form-group full"><label>ملاحظات</label><textarea id="supNotes" placeholder="ملاحظات إضافية..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSupplierModal()">إلغاء</button>
+      <button class="btn btn-orange" onclick="saveSupplier()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE MODAL -->
+<div class="modal-overlay" id="invoiceModal" style="display:none;" onclick="if(event.target===this)closeInvoiceModal()">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="invModalTitle"><i class="fas fa-file-invoice" style="color:var(--danger);"></i> فاتورة شراء جديدة</div>
+      <button class="modal-close" onclick="closeInvoiceModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="invEditId">
+      <div class="form-grid">
+        <div class="form-group"><label>المورد <span class="req">*</span></label><select id="invSupplier" onchange="genInvCode()"><option value="">اختر المورد</option></select></div>
+        <div class="form-group"><label>كود الفاتورة</label><input type="text" id="invCode" style="direction:ltr;font-weight:700;color:var(--primary);" placeholder="سيتولد تلقائياً"></div>
+        <div class="form-group"><label>رقم الفاتورة (المورد)</label><input type="text" id="invRefNo" placeholder="رقم الفاتورة من المورد"></div>
+        <div class="form-group"><label>تاريخ الفاتورة <span class="req">*</span></label><input type="date" id="invDate"></div>
+        <div class="form-group"><label>تاريخ الاستحقاق</label><input type="date" id="invDueDate"></div>
+        <div class="form-group"><label>المشروع</label><select id="invProject"><option value="">— بدون مشروع —</option></select></div>
+        <div class="form-group"><label>الفئة</label><select id="invCat"><option value="">— الفئة —</option></select></div>
+        <div class="form-group"><label>حالة الفاتورة</label>
+          <select id="invStatus">
+            <option value="unpaid">غير مدفوعة</option>
+            <option value="partial">مدفوعة جزئياً</option>
+            <option value="paid">مدفوعة بالكامل</option>
+          </select>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title"><i class="fas fa-list"></i> بنود الفاتورة</div>
+      <div id="invItemsContainer">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 30px;gap:8px;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-gray);">البند</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-gray);">الكمية</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-gray);">سعر الوحدة</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-gray);">الإجمالي</div>
+          <div></div>
+        </div>
+        <div id="invItems"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="addInvItem()" style="margin-top:6px;"><i class="fas fa-plus"></i> إضافة بند</button>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="form-group"><label>نسبة الضريبة %</label><input type="number" id="invTax" value="14" min="0" max="100" oninput="calcInvTotal()"></div>
+        <div class="form-group"><label>نسبة الخصم %</label><input type="number" id="invDiscount" value="0" min="0" max="100" oninput="calcInvTotal()"></div>
+        <div class="form-group"><label>الإجمالي النهائي</label>
+          <div style="background:var(--primary-xlight);border:1.5px solid var(--primary);border-radius:var(--radius-sm);padding:9px 12px;font-weight:800;font-size:14px;color:var(--primary);" id="invTotalDisplay">0.00 ج.م</div>
+        </div>
+      </div>
+      <div class="form-group"><label>ملاحظات</label><textarea id="invNotes" placeholder="ملاحظات الفاتورة..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeInvoiceModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveInvoice()"><i class="fas fa-save"></i> حفظ الفاتورة</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal" style="display:none;" onclick="if(event.target===this)closePaymentModal()">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="payModalTitle"><i class="fas fa-money-bill" style="color:var(--success);"></i> تسجيل دفعة</div>
+      <button class="modal-close" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="payEditId">
+      <div class="form-group"><label>المورد <span class="req">*</span></label><select id="paySupplier"><option value="">اختر المورد</option></select></div>
+      <div class="form-group"><label>الفاتورة (اختياري)</label><select id="payInvoice"><option value="">— دفعة عامة —</option></select></div>
+      <div class="form-group"><label>المبلغ <span class="req">*</span></label>
+        <div class="input-prefix"><input type="number" id="payAmount" class="prefix-input" placeholder="0.00" min="0"><span class="prefix-label">ج.م</span></div>
+      </div>
+      <div class="form-group"><label>التاريخ</label><input type="date" id="payDate"></div>
+      <div class="form-group"><label>طريقة الدفع</label>
+        <select id="payMethod">
+          <option value="cash">نقدي</option><option value="check">شيك</option>
+          <option value="transfer">تحويل بنكي</option><option value="other">أخرى</option>
+        </select>
+      </div>
+      <div class="form-group"><label>رقم المرجع</label><input type="text" id="payRef" placeholder="رقم الشيك أو التحويل"></div>
+      <div class="form-group"><label>الخزنة</label><select id="payTreasury"><option value="">اختر الخزنة</option></select></div>
+      <div class="form-group"><label>ملاحظات</label><input type="text" id="payNotes" placeholder="..."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePaymentModal()">إلغاء</button>
+      <button class="btn btn-success" onclick="savePayment()"><i class="fas fa-save"></i> تسجيل</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATEMENT MODAL -->
+<div class="modal-overlay" id="stmtModal" style="display:none;" onclick="if(event.target===this)document.getElementById('stmtModal').style.display='none'">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-file-alt" style="color:var(--orange);"></i> كشف حساب مورد</div>
+      <button class="modal-close" onclick="document.getElementById('stmtModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="stmtBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('stmtModal').style.display='none'">إغلاق</button>
+      <button class="btn btn-primary" onclick="printStmt()"><i class="fas fa-print"></i> طباعة</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="modal-overlay" id="confirmModal" style="display:none;">
+  <div class="modal modal-sm">
+    <div class="modal-body" style="text-align:center;padding:26px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--danger-light);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--danger);"><i class="fas fa-trash-alt"></i></div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:5px;" id="confirmTitle">تأكيد</div>
+      <div style="font-size:12px;color:var(--text-gray);" id="confirmMsg">هل أنت متأكد؟</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('confirmModal').style.display='none'">إلغاء</button>
+      <button class="btn btn-soft-danger" id="confirmBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ==================== DB ====================
+const DB_NAME='ProjectManagementDB',DB_VER=5;
+const ST={SETTINGS:'settings',CATS:'categories',PROJECTS:'projects',TREASURIES:'treasuries',
+  TRANS:'transactions',SUPERVISORS:'supervisors',CUSTODIES:'custodies',CUSTODY_TRANS:'custody_trans',
+  SUPPLIERS:'suppliers',SUP_INVOICES:'sup_invoices',SUP_PAYMENTS:'sup_payments'};
+let db=null;
+
+async function initDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>{
+      const d=e.target.result;
+      Object.values(ST).forEach(s=>{
+        if(!d.objectStoreNames.contains(s))
+          d.createObjectStore(s,{keyPath:s==='settings'?'key':'id'});
+      });
+    };
+    req.onsuccess=e=>{db=e.target.result;res(db);};
+    req.onerror=rej;
+  });
+}
+const dbAll=s=>new Promise((res,rej)=>{const tx=db.transaction(s,'readonly');const r=tx.objectStore(s).getAll();r.onsuccess=e=>res(e.target.result);r.onerror=rej;});
+const dbPut=(s,o)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readwrite');const r=tx.objectStore(s).put(o);r.onsuccess=()=>res();r.onerror=rej;});
+const dbDel=(s,k)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readwrite');const r=tx.objectStore(s).delete(k);r.onsuccess=()=>res();r.onerror=rej;});
+const dbGetK=(s,k)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readonly');const r=tx.objectStore(s).get(k);r.onsuccess=e=>res(e.target.result?.value??null);r.onerror=rej;});
+
+// ==================== STATE ====================
+let suppliers=[],invoices=[],payments=[],categories=[],projects=[],treasuries=[];
+let selectedSupId=null,activeTab='invoices';
+const uid=()=>'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
+const fmt=n=>Number(n||0).toLocaleString('ar-EG',{maximumFractionDigits:2});
+const fmtDate=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('ar-EG');};
+const getSup=id=>suppliers.find(s=>s.id===id);
+const getInv=id=>invoices.find(i=>i.id===id);
+const catTypeLabels={materials:'مواد بناء',equipment:'معدات',services:'خدمات',subcontractor:'مقاول باطن',other:'أخرى'};
+const payMethodLabels={cash:'نقدي',check:'شيك',transfer:'تحويل بنكي',other:'أخرى'};
+
+// ==================== BALANCE ====================
+function calcSupBalance(supId){
+  const sup=getSup(supId);if(!sup)return{totalInv:0,totalPaid:0,balance:0};
+  const openBal=parseFloat(sup.openingBalance||0);
+  const totalInv=invoices.filter(i=>i.supplierId===supId&&!i.deleted).reduce((s,i)=>s+parseFloat(i.total||0),0);
+  const totalPaid=payments.filter(p=>p.supplierId===supId&&!p.deleted).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+  const balance=openBal+totalInv-totalPaid;
+  return{totalInv,totalPaid,balance,openBal};
+}
+
+function getInvPaid(invId){
+  return payments.filter(p=>p.invoiceId===invId&&!p.deleted).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+}
+
+function getInvStatus(inv){
+  const paid=getInvPaid(inv.id);
+  const total=parseFloat(inv.total||0);
+  if(paid<=0)return'unpaid';
+  if(paid>=total)return'paid';
+  return'partial';
+}
+
+// ==================== STATS ====================
+function updateStats(){
+  const totalInv=invoices.filter(i=>!i.deleted).reduce((s,i)=>s+parseFloat(i.total||0),0);
+  const totalPaid=payments.filter(p=>!p.deleted).reduce((s,p)=>s+parseFloat(p.amount||0),0);
+  const totalDue=suppliers.reduce((s,sup)=>{const b=calcSupBalance(sup.id);return s+(b.balance>0?b.balance:0);},0);
+  document.getElementById('stSuppliers').textContent=suppliers.length;
+  document.getElementById('stInvoices').textContent=invoices.filter(i=>!i.deleted).length;
+  document.getElementById('stTotalInv').textContent=fmt(totalInv);
+  document.getElementById('stTotalPaid').textContent=fmt(totalPaid);
+  document.getElementById('stTotalDue').textContent=fmt(totalDue);
+}
+
+// ==================== SUPPLIER LIST ====================
+function renderSupplierList(){
+  const body=document.getElementById('supplierListBody');
+  const q=document.getElementById('supSearch').value.toLowerCase();
+  const fCat=document.getElementById('fSupCat').value;
+  let list=[...suppliers];
+  if(q) list=list.filter(s=>s.name.toLowerCase().includes(q)||(s.code||'').toLowerCase().includes(q)||(s.phone||'').includes(q));
+  if(fCat) list=list.filter(s=>s.category===fCat);
+  list=list.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+
+  if(!list.length){body.innerHTML=`<div class="empty-state"><i class="fas fa-truck" style="font-size:32px;opacity:.3;display:block;margin-bottom:8px;"></i><p>لا يوجد موردون</p></div>`;return;}
+
+  body.innerHTML=list.map(sup=>{
+    const{balance}=calcSupBalance(sup.id);
+    const isSelected=sup.id===selectedSupId;
+    const invCount=invoices.filter(i=>i.supplierId===sup.id&&!i.deleted).length;
+    return`<div class="sup-item ${isSelected?'selected':''}" onclick="selectSupplier('${sup.id}')">
+      <div class="sup-avatar" style="background:${sup.color||'var(--orange)'};">${sup.name.charAt(0)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="sup-item-name">${sup.name}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:2px;">
+          <span class="sup-item-code">${sup.code||'—'}</span>
+          <span style="font-size:10px;color:var(--text-gray);">${catTypeLabels[sup.category]||''}</span>
+          <span style="font-size:10px;color:var(--text-gray);"><i class="fas fa-file-invoice"></i>${invCount}</span>
+        </div>
+      </div>
+      <div style="text-align:left;flex-shrink:0;">
+        <div class="sup-item-balance" style="color:${balance>0?'var(--danger)':balance<0?'var(--success)':'var(--text-gray)'};">${fmt(Math.abs(balance))}</div>
+        <div style="font-size:9px;color:var(--text-gray);">${balance>0?'علينا':balance<0?'لنا':'متوازن'}</div>
+      </div>
+      <div class="sup-item-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-icon btn-ghost btn-sm" onclick="openSupplierModal('${sup.id}')" title="تعديل"><i class="fas fa-pen" style="font-size:11px;color:var(--warning);"></i></button>
+        <button class="btn btn-icon btn-ghost btn-sm" onclick="confirmDeleteSup('${sup.id}')" title="حذف"><i class="fas fa-trash" style="font-size:11px;color:var(--danger);"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== SELECT SUPPLIER ====================
+function selectSupplier(id){
+  selectedSupId=id;
+  renderSupplierList();
+  renderDetail(id);
+}
+
+// ==================== DETAIL ====================
+function renderDetail(id){
+  const sup=getSup(id);if(!sup)return;
+  const{totalInv,totalPaid,balance,openBal}=calcSupBalance(id);
+  document.getElementById('detailEmpty').style.display='none';
+  const dc=document.getElementById('detailContent');
+  dc.style.display='flex';
+
+  dc.innerHTML=`
+    <!-- HERO -->
+    <div class="sup-hero" style="flex-shrink:0;">
+      <div class="sup-hero-content">
+        <div class="sup-hero-avatar" style="background:rgba(255,255,255,.25);">${sup.name.charAt(0)}</div>
+        <div style="flex:1;">
+          <div class="sup-hero-name">${sup.name}</div>
+          <div class="sup-hero-meta">${catTypeLabels[sup.category]||''} ${sup.phone?'• '+sup.phone:''}</div>
+          <div class="sup-hero-code">${sup.code||'—'}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;position:relative;z-index:1;">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;" onclick="openStatementModal('${id}')"><i class="fas fa-file-alt"></i> كشف الحساب</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;" onclick="openInvoiceModal('${id}')"><i class="fas fa-plus"></i> فاتورة</button>
+        </div>
+      </div>
+    </div>
+    <!-- BALANCE STRIP -->
+    <div class="balance-strip" style="flex-shrink:0;">
+      <div class="bs-item"><div class="bs-val" style="color:var(--text-gray);">${fmt(openBal)}</div><div class="bs-lbl">رصيد افتتاحي</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--danger);">${fmt(totalInv)}</div><div class="bs-lbl">إجمالي الفواتير</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--success);">${fmt(totalPaid)}</div><div class="bs-lbl">إجمالي المدفوع</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:${balance>0?'var(--danger)':balance<0?'var(--success)':'var(--text-gray)'};">${fmt(Math.abs(balance))}</div><div class="bs-lbl">${balance>0?'مستحق علينا':balance<0?'لصالحنا':'متوازن'}</div></div>
+    </div>
+    <!-- TABS -->
+    <div class="detail-tabs" style="flex-shrink:0;">
+      <button class="dtab ${activeTab==='invoices'?'active':''}" onclick="switchTab('invoices','${id}')"><i class="fas fa-file-invoice"></i> الفواتير</button>
+      <button class="dtab ${activeTab==='payments'?'active':''}" onclick="switchTab('payments','${id}')"><i class="fas fa-money-bill"></i> المدفوعات</button>
+      <button class="dtab ${activeTab==='info'?'active':''}" onclick="switchTab('info','${id}')"><i class="fas fa-info-circle"></i> بيانات المورد</button>
+    </div>
+    <!-- BODY -->
+    <div class="detail-body" id="detailTabBody"></div>`;
+
+  renderTabContent(id,activeTab);
+}
+
+function switchTab(tab,supId){
+  activeTab=tab;
+  document.querySelectorAll('.dtab').forEach(b=>{b.classList.toggle('active',b.textContent.includes(tab==='invoices'?'الفوات':tab==='payments'?'المدفوع':'بيانات'));});
+  renderTabContent(supId,tab);
+}
+
+function renderTabContent(supId,tab){
+  const body=document.getElementById('detailTabBody');
+  if(tab==='invoices'){
+    const invs=invoices.filter(i=>i.supplierId===supId&&!i.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    body.innerHTML=`
+      <div class="filter-bar" style="justify-content:space-between;">
+        <div style="display:flex;gap:6px;">
+          <select class="filter-select" id="fInvStatus" onchange="renderTabContent('${supId}','${tab}')">
+            <option value="">كل الحالات</option><option value="unpaid">غير مدفوعة</option>
+            <option value="partial">جزئي</option><option value="paid">مدفوعة</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openInvoiceModal('${supId}')"><i class="fas fa-plus"></i> فاتورة جديدة</button>
+      </div>
+      <table>
+        <thead><tr><th>الكود</th><th>التاريخ</th><th>الاستحقاق</th><th>المشروع</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${invs.length?invs.filter(i=>{const fs=document.getElementById('fInvStatus')?.value||'';return!fs||getInvStatus(i)===fs;}).map(inv=>{
+          const paid=getInvPaid(inv.id);
+          const remaining=parseFloat(inv.total||0)-paid;
+          const status=getInvStatus(inv);
+          const statusLabel={unpaid:'غير مدفوعة',partial:'جزئي',paid:'مدفوعة'}[status];
+          const pct=parseFloat(inv.total||0)>0?Math.min(100,Math.round((paid/parseFloat(inv.total||0))*100)):0;
+          const proj=projects.find(p=>p.id===inv.projectId);
+          return`<tr>
+            <td><span style="font-size:10px;font-weight:700;color:var(--primary);direction:ltr;background:var(--primary-xlight);padding:2px 6px;border-radius:4px;">${inv.code}</span></td>
+            <td style="font-size:12px;">${fmtDate(inv.date)}</td>
+            <td style="font-size:12px;color:${inv.dueDate&&new Date(inv.dueDate)<new Date()&&status!=='paid'?'var(--danger)':'var(--text-dark)'};">${fmtDate(inv.dueDate)}</td>
+            <td style="font-size:11px;color:var(--primary);">${proj?proj.name:'—'}</td>
+            <td style="font-weight:700;">${fmt(inv.total)} ج.م</td>
+            <td style="color:var(--success);font-weight:700;">${fmt(paid)} ج.م</td>
+            <td style="color:${remaining>0?'var(--danger)':'var(--success)'};font-weight:700;">${fmt(remaining)} ج.م</td>
+            <td>
+              <div>
+                <span class="badge inv-${status}" style="font-size:10px;">${statusLabel}</span>
+                <div class="progress-bar" style="margin-top:4px;width:80px;"><div class="progress-fill" style="width:${pct}%;background:${status==='paid'?'var(--success)':status==='partial'?'var(--warning)':'var(--danger)'};"></div></div>
+              </div>
+            </td>
+            <td>
+              <div style="display:flex;gap:3px;">
+                ${status!=='paid'?`<button class="btn btn-icon btn-ghost btn-sm" onclick="openPaymentModalForInv('${supId}','${inv.id}')" title="دفع"><i class="fas fa-money-bill" style="font-size:11px;color:var(--success);"></i></button>`:''}
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="openInvoiceModal('${supId}','${inv.id}')" title="تعديل"><i class="fas fa-pen" style="font-size:11px;color:var(--warning);"></i></button>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="confirmDeleteInv('${inv.id}')" title="حذف"><i class="fas fa-trash" style="font-size:11px;color:var(--danger);"></i></button>
+              </div>
+            </td>
+          </tr>`;
+        }).join(''):`<tr><td colspan="9"><div class="empty-state" style="padding:24px;"><i class="fas fa-file-invoice" style="font-size:28px;opacity:.3;display:block;margin-bottom:6px;"></i><p>لا توجد فواتير</p></div></td></tr>`}</tbody>
+      </table>`;
+  } else if(tab==='payments'){
+    const pays=payments.filter(p=>p.supplierId===supId&&!p.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    body.innerHTML=`
+      <div class="filter-bar" style="justify-content:flex-end;">
+        <button class="btn btn-success btn-sm" onclick="openPaymentModal('${supId}')"><i class="fas fa-plus"></i> دفعة جديدة</button>
+      </div>
+      <table>
+        <thead><tr><th>التاريخ</th><th>البيان</th><th>الفاتورة</th><th>طريقة الدفع</th><th>المرجع</th><th>المبلغ</th><th></th></tr></thead>
+        <tbody>${pays.length?pays.map(pay=>{
+          const inv=getInv(pay.invoiceId);
+          return`<tr>
+            <td style="font-size:12px;">${fmtDate(pay.date)}</td>
+            <td>${pay.notes||'دفعة مورد'}</td>
+            <td>${inv?`<span style="font-size:10px;direction:ltr;font-weight:700;color:var(--primary);background:var(--primary-xlight);padding:2px 6px;border-radius:4px;">${inv.code}</span>`:'—'}</td>
+            <td><span class="badge badge-g">${payMethodLabels[pay.method]||pay.method}</span></td>
+            <td style="font-size:11px;direction:ltr;">${pay.refNo||'—'}</td>
+            <td style="font-weight:800;color:var(--success);">${fmt(pay.amount)} ج.م</td>
+            <td>
+              <div style="display:flex;gap:3px;">
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="confirmDeletePay('${pay.id}')"><i class="fas fa-trash" style="font-size:11px;color:var(--danger);"></i></button>
+              </div>
+            </td>
+          </tr>`;
+        }).join(''):`<tr><td colspan="7"><div class="empty-state" style="padding:24px;"><i class="fas fa-money-bill" style="font-size:28px;opacity:.3;display:block;margin-bottom:6px;"></i><p>لا توجد مدفوعات</p></div></td></tr>`}</tbody>
+      </table>`;
+  } else {
+    const sup=getSup(supId);
+    body.innerHTML=`
+      <div style="padding:16px;">
+        ${[
+          {l:'اسم المورد',v:sup.name,i:'fas fa-truck'},
+          {l:'الكود',v:sup.code,i:'fas fa-barcode'},
+          {l:'النوع',v:catTypeLabels[sup.category]||'—',i:'fas fa-tag'},
+          {l:'التليفون',v:sup.phone||'—',i:'fas fa-phone'},
+          {l:'البريد',v:sup.email||'—',i:'fas fa-envelope'},
+          {l:'الشخص المسؤول',v:sup.contactPerson||'—',i:'fas fa-user'},
+          {l:'الرقم الضريبي',v:sup.taxNumber||'—',i:'fas fa-receipt'},
+          {l:'العنوان',v:sup.address||'—',i:'fas fa-map-marker-alt'},
+          {l:'رصيد افتتاحي',v:fmt(sup.openingBalance||0)+' ج.م',i:'fas fa-coins'},
+        ].map(x=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="width:32px;height:32px;border-radius:8px;background:var(--orange-light);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;"><i class="${x.i}"></i></div>
+          <div><div style="font-size:10px;color:var(--text-gray);font-weight:700;">${x.l}</div><div style="font-size:13px;font-weight:600;">${x.v}</div></div>
+        </div>`).join('')}
+        ${sup.notes?`<div style="margin-top:12px;"><div style="font-size:11px;font-weight:700;color:var(--text-gray);margin-bottom:6px;">ملاحظات</div><div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;">${sup.notes}</div></div>`:''}
+        <div style="margin-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="openSupplierModal('${supId}')"><i class="fas fa-pen"></i> تعديل البيانات</button>
+          <button class="btn btn-soft-danger btn-sm" onclick="confirmDeleteSup('${supId}')"><i class="fas fa-trash"></i> حذف المورد</button>
+        </div>
+      </div>`;
+  }
+}
+
+// ==================== SUPPLIER MODAL ====================
+function openSupplierModal(editId){
+  const s=editId?getSup(editId):null;
+  document.getElementById('supEditId').value=editId||'';
+  document.getElementById('supName').value=s?.name||'';
+  document.getElementById('supCode').value=s?.code||genSupCode();
+  document.getElementById('supCategory').value=s?.category||'materials';
+  document.getElementById('supPhone').value=s?.phone||'';
+  document.getElementById('supEmail').value=s?.email||'';
+  document.getElementById('supContact').value=s?.contactPerson||'';
+  document.getElementById('supTax').value=s?.taxNumber||'';
+  document.getElementById('supOpenBal').value=s?.openingBalance||'';
+  document.getElementById('supColor').value=s?.color||'#F97316';
+  document.getElementById('supAddress').value=s?.address||'';
+  document.getElementById('supNotes').value=s?.notes||'';
+  document.getElementById('supModalTitle').innerHTML=`<i class="fas fa-truck" style="color:var(--orange);"></i> ${editId?'تعديل مورد':'مورد جديد'}`;
+  document.getElementById('supplierModal').style.display='flex';
+}
+function closeSupplierModal(){document.getElementById('supplierModal').style.display='none';}
+
+async function saveSupplier(){
+  const name=document.getElementById('supName').value.trim();
+  if(!name){showToast('ادخل اسم المورد','error');return;}
+  const editId=document.getElementById('supEditId').value;
+  const s={
+    id:editId||uid(),name,
+    code:document.getElementById('supCode').value,
+    category:document.getElementById('supCategory').value,
+    phone:document.getElementById('supPhone').value,
+    email:document.getElementById('supEmail').value,
+    contactPerson:document.getElementById('supContact').value,
+    taxNumber:document.getElementById('supTax').value,
+    openingBalance:parseFloat(document.getElementById('supOpenBal').value||0),
+    color:document.getElementById('supColor').value,
+    address:document.getElementById('supAddress').value,
+    notes:document.getElementById('supNotes').value,
+    createdAt:editId?(getSup(editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.SUPPLIERS,s);
+  if(editId){const i=suppliers.findIndex(x=>x.id===editId);if(i!==-1)suppliers[i]=s;}
+  else suppliers.push(s);
+  closeSupplierModal();
+  updateStats();renderSupplierList();
+  if(selectedSupId===editId)renderDetail(editId);
+  showToast(editId?'✓ تم تعديل المورد':'✓ تم إضافة المورد','success');
+}
+
+function confirmDeleteSup(id){
+  const s=getSup(id);
+  document.getElementById('confirmTitle').textContent='حذف مورد';
+  document.getElementById('confirmMsg').textContent=`هل تحذف "${s?.name}"؟ ستُحذف كل فواتيره ومدفوعاته.`;
+  document.getElementById('confirmBtn').onclick=()=>deleteSup(id);
+  document.getElementById('confirmModal').style.display='flex';
+}
+async function deleteSup(id){
+  document.getElementById('confirmModal').style.display='none';
+  await dbDel(ST.SUPPLIERS,id);
+  suppliers=suppliers.filter(s=>s.id!==id);
+  const delInvs=invoices.filter(i=>i.supplierId===id).map(i=>i.id);
+  for(const iid of delInvs)await dbDel(ST.SUP_INVOICES,iid);
+  invoices=invoices.filter(i=>i.supplierId!==id);
+  const delPays=payments.filter(p=>p.supplierId===id).map(p=>p.id);
+  for(const pid of delPays)await dbDel(ST.SUP_PAYMENTS,pid);
+  payments=payments.filter(p=>p.supplierId!==id);
+  if(selectedSupId===id){selectedSupId=null;document.getElementById('detailEmpty').style.display='flex';document.getElementById('detailContent').style.display='none';}
+  updateStats();renderSupplierList();
+  showToast('✓ تم الحذف','success');
+}
+
+// ==================== INVOICE MODAL ====================
+let invItems=[];
+function openInvoiceModal(supId,editId=null){
+  const inv=editId?getInv(editId):null;
+  document.getElementById('invEditId').value=editId||'';
+  // populate supplier select
+  const supSel=document.getElementById('invSupplier');
+  supSel.innerHTML='<option value="">اختر المورد</option>'+suppliers.map(s=>`<option value="${s.id}" ${(supId&&s.id===supId)||inv?.supplierId===s.id?'selected':''}>${s.name}</option>`).join('');
+  document.getElementById('invCode').value=inv?.code||genInvCode();
+  document.getElementById('invRefNo').value=inv?.refNo||'';
+  document.getElementById('invDate').value=inv?.date||new Date().toISOString().split('T')[0];
+  document.getElementById('invDueDate').value=inv?.dueDate||'';
+  document.getElementById('invStatus').value=inv?.status||'unpaid';
+  document.getElementById('invTax').value=inv?.taxRate??14;
+  document.getElementById('invDiscount').value=inv?.discount??0;
+  document.getElementById('invNotes').value=inv?.notes||'';
+  // projects
+  const projSel=document.getElementById('invProject');
+  projSel.innerHTML='<option value="">— بدون مشروع —</option>'+projects.map(p=>`<option value="${p.id}" ${inv?.projectId===p.id?'selected':''}>${p.name}</option>`).join('');
+  // cats
+  const catSel=document.getElementById('invCat');
+  catSel.innerHTML='<option value="">— الفئة —</option>'+categories.map(c=>`<option value="${c.id}" ${inv?.catId===c.id?'selected':''}>${c.name}</option>`).join('');
+  // items
+  invItems=inv?.items||[{desc:'',qty:1,unitPrice:0,total:0}];
+  renderInvItems();
+  document.getElementById('invModalTitle').innerHTML=`<i class="fas fa-file-invoice" style="color:var(--danger);"></i> ${editId?'تعديل فاتورة':'فاتورة شراء جديدة'}`;
+  document.getElementById('invoiceModal').style.display='flex';
+}
+function closeInvoiceModal(){document.getElementById('invoiceModal').style.display='none';}
+
+function renderInvItems(){
+  document.getElementById('invItems').innerHTML=invItems.map((item,i)=>`
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 30px;gap:8px;margin-bottom:6px;">
+      <input type="text" value="${item.desc||''}" placeholder="وصف البند..." onchange="invItems[${i}].desc=this.value">
+      <input type="number" value="${item.qty||1}" min="0" step="0.01" onchange="invItems[${i}].qty=parseFloat(this.value||1);calcItemTotal(${i})">
+      <input type="number" value="${item.unitPrice||0}" min="0" step="0.01" onchange="invItems[${i}].unitPrice=parseFloat(this.value||0);calcItemTotal(${i})">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-weight:700;font-size:13px;color:var(--success);" id="itemTotal_${i}">${fmt(item.total||0)}</div>
+      <button class="btn btn-icon btn-ghost btn-sm" onclick="removeInvItem(${i})" style="color:var(--danger);"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+  calcInvTotal();
+}
+
+function calcItemTotal(i){
+  invItems[i].total=(parseFloat(invItems[i].qty||1))*(parseFloat(invItems[i].unitPrice||0));
+  const el=document.getElementById('itemTotal_'+i);
+  if(el)el.textContent=fmt(invItems[i].total);
+  calcInvTotal();
+}
+
+function addInvItem(){invItems.push({desc:'',qty:1,unitPrice:0,total:0});renderInvItems();}
+function removeInvItem(i){invItems.splice(i,1);renderInvItems();}
+
+function calcInvTotal(){
+  const subtotal=invItems.reduce((s,it)=>s+parseFloat(it.total||0),0);
+  const tax=parseFloat(document.getElementById('invTax').value||0);
+  const disc=parseFloat(document.getElementById('invDiscount').value||0);
+  const total=subtotal*(1+tax/100)*(1-disc/100);
+  document.getElementById('invTotalDisplay').textContent=fmt(total)+' ج.م';
+  return total;
+}
+
+function genInvCode(){return'INV-VND-'+(invoices.length+1).toString().padStart(4,'0');}
+
+async function saveInvoice(){
+  const supId=document.getElementById('invSupplier').value;
+  if(!supId){showToast('اختر المورد','error');return;}
+  if(!invItems.length||!invItems[0].desc){showToast('أضف بنداً واحداً على الأقل','error');return;}
+  const editId=document.getElementById('invEditId').value;
+  const total=calcInvTotal();
+  const inv={
+    id:editId||uid(),
+    supplierId:supId,
+    code:document.getElementById('invCode').value||genInvCode(),
+    refNo:document.getElementById('invRefNo').value,
+    date:document.getElementById('invDate').value,
+    dueDate:document.getElementById('invDueDate').value||null,
+    projectId:document.getElementById('invProject').value||null,
+    catId:document.getElementById('invCat').value||null,
+    status:document.getElementById('invStatus').value,
+    items:[...invItems],
+    taxRate:parseFloat(document.getElementById('invTax').value||14),
+    discount:parseFloat(document.getElementById('invDiscount').value||0),
+    total,
+    notes:document.getElementById('invNotes').value,
+    createdAt:editId?(getInv(editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.SUP_INVOICES,inv);
+  if(editId){const i=invoices.findIndex(x=>x.id===editId);if(i!==-1)invoices[i]=inv;}
+  else invoices.push(inv);
+  closeInvoiceModal();
+  updateStats();renderSupplierList();
+  if(selectedSupId===supId)renderDetail(supId);
+  showToast(editId?'✓ تم تعديل الفاتورة':'✓ تم إضافة الفاتورة','success');
+}
+
+function confirmDeleteInv(id){
+  const inv=getInv(id);
+  document.getElementById('confirmTitle').textContent='حذف فاتورة';
+  document.getElementById('confirmMsg').textContent=`هل تحذف الفاتورة ${inv?.code}؟`;
+  document.getElementById('confirmBtn').onclick=()=>deleteInv(id);
+  document.getElementById('confirmModal').style.display='flex';
+}
+async function deleteInv(id){
+  document.getElementById('confirmModal').style.display='none';
+  const inv=getInv(id);
+  await dbDel(ST.SUP_INVOICES,id);
+  invoices=invoices.filter(i=>i.id!==id);
+  updateStats();renderSupplierList();
+  if(selectedSupId===inv?.supplierId)renderDetail(inv.supplierId);
+  showToast('✓ تم حذف الفاتورة','success');
+}
+
+// ==================== PAYMENT MODAL ====================
+function openPaymentModal(supId){
+  const s=supId?getSup(supId):null;
+  document.getElementById('payEditId').value='';
+  const paySup=document.getElementById('paySupplier');
+  paySup.innerHTML='<option value="">اختر المورد</option>'+suppliers.map(sp=>`<option value="${sp.id}" ${supId&&sp.id===supId?'selected':''}>${sp.name}</option>`).join('');
+  populatePayInvoiceSelect(supId);
+  document.getElementById('payAmount').value='';
+  document.getElementById('payDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('payMethod').value='cash';
+  document.getElementById('payRef').value='';
+  document.getElementById('payNotes').value='';
+  const trsSel=document.getElementById('payTreasury');
+  trsSel.innerHTML='<option value="">اختر الخزنة</option>'+treasuries.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  document.getElementById('paymentModal').style.display='flex';
+}
+
+function openPaymentModalForInv(supId,invId){
+  openPaymentModal(supId);
+  const inv=getInv(invId);
+  if(inv){
+    document.getElementById('payInvoice').value=invId;
+    const paid=getInvPaid(invId);
+    const remaining=parseFloat(inv.total||0)-paid;
+    if(remaining>0)document.getElementById('payAmount').value=remaining.toFixed(2);
+  }
+}
+
+function populatePayInvoiceSelect(supId){
+  const sel=document.getElementById('payInvoice');
+  const supInvs=supId?invoices.filter(i=>i.supplierId===supId&&getInvStatus(i)!=='paid'):invoices.filter(i=>getInvStatus(i)!=='paid');
+  sel.innerHTML='<option value="">— دفعة عامة —</option>'+supInvs.map(i=>`<option value="${i.id}">${i.code} (${fmt(parseFloat(i.total||0)-getInvPaid(i.id))} ج.م متبقي)</option>`).join('');
+}
+
+function closePaymentModal(){document.getElementById('paymentModal').style.display='none';}
+
+async function savePayment(){
+  const supId=document.getElementById('paySupplier').value;
+  const amount=parseFloat(document.getElementById('payAmount').value||0);
+  if(!supId){showToast('اختر المورد','error');return;}
+  if(!amount||amount<=0){showToast('ادخل المبلغ','error');return;}
+  const editId=document.getElementById('payEditId').value;
+  const pay={
+    id:editId||uid(),
+    supplierId:supId,
+    invoiceId:document.getElementById('payInvoice').value||null,
+    amount,
+    date:document.getElementById('payDate').value,
+    method:document.getElementById('payMethod').value,
+    refNo:document.getElementById('payRef').value,
+    treasuryId:document.getElementById('payTreasury').value||null,
+    notes:document.getElementById('payNotes').value,
+    createdAt:editId?(payments.find(p=>p.id===editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.SUP_PAYMENTS,pay);
+  if(editId){const i=payments.findIndex(p=>p.id===editId);if(i!==-1)payments[i]=pay;}
+  else payments.push(pay);
+  // update invoice status
+  if(pay.invoiceId){
+    const inv=getInv(pay.invoiceId);
+    if(inv){inv.status=getInvStatus(inv);await dbPut(ST.SUP_INVOICES,inv);}
+  }
+  closePaymentModal();
+  updateStats();renderSupplierList();
+  if(selectedSupId===supId)renderDetail(supId);
+  showToast('✓ تم تسجيل الدفعة','success');
+}
+
+function confirmDeletePay(id){
+  const pay=payments.find(p=>p.id===id);
+  document.getElementById('confirmTitle').textContent='حذف دفعة';
+  document.getElementById('confirmMsg').textContent=`هل تحذف دفعة ${fmt(pay?.amount)} ج.م؟`;
+  document.getElementById('confirmBtn').onclick=()=>deletePay(id);
+  document.getElementById('confirmModal').style.display='flex';
+}
+async function deletePay(id){
+  document.getElementById('confirmModal').style.display='none';
+  const pay=payments.find(p=>p.id===id);
+  await dbDel(ST.SUP_PAYMENTS,id);
+  payments=payments.filter(p=>p.id!==id);
+  updateStats();renderSupplierList();
+  if(selectedSupId===pay?.supplierId)renderDetail(pay.supplierId);
+  showToast('✓ تم الحذف','success');
+}
+
+// ==================== STATEMENT ====================
+function openStatementModal(supId){
+  const sup=getSup(supId);if(!sup)return;
+  const{totalInv,totalPaid,balance,openBal}=calcSupBalance(supId);
+  const invs=invoices.filter(i=>i.supplierId===supId&&!i.deleted).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const pays=payments.filter(p=>p.supplierId===supId&&!p.deleted).sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  // merge and sort
+  const allTx=[
+    ...invs.map(i=>({date:i.date,type:'inv',desc:`فاتورة شراء — ${i.refNo||i.code}`,debit:parseFloat(i.total||0),credit:0,ref:i.code})),
+    ...pays.map(p=>({date:p.date,type:'pay',desc:`دفعة — ${payMethodLabels[p.method]||''} ${p.refNo?'#'+p.refNo:''}`,debit:0,credit:parseFloat(p.amount||0),ref:''})),
+  ].sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  let runBal=openBal;
+  const rows=allTx.map(tx=>{
+    runBal+=tx.debit-tx.credit;
+    return`<tr>
+      <td style="font-size:11px;">${fmtDate(tx.date)}</td>
+      <td>${tx.desc}</td>
+      <td style="font-weight:800;color:var(--danger);text-align:left;">${tx.debit?fmt(tx.debit)+' ج.م':'—'}</td>
+      <td style="font-weight:800;color:var(--success);text-align:left;">${tx.credit?fmt(tx.credit)+' ج.م':'—'}</td>
+      <td style="font-weight:800;color:${runBal>0?'var(--danger)':runBal<0?'var(--success)':'var(--text-gray)'};text-align:left;">${fmt(Math.abs(runBal))} ج.م ${runBal>0?'علينا':runBal<0?'لنا':''}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('stmtBody').innerHTML=`
+    <div id="printStmtArea">
+      <div style="background:linear-gradient(135deg,${sup.color||'var(--orange)'},#F97316);color:white;padding:16px 20px;border-radius:var(--radius) var(--radius) 0 0;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:16px;font-weight:800;">كشف حساب مورد</div>
+          <div style="font-size:12px;opacity:.8;">${sup.name} — ${sup.code||''}</div>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:11px;opacity:.7;">الرصيد الحالي</div>
+          <div style="font-size:20px;font-weight:800;">${fmt(Math.abs(balance))} ج.م</div>
+          <div style="font-size:11px;opacity:.8;">${balance>0?'مستحق علينا':balance<0?'لصالحنا':'متوازن'}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--border);">
+        ${[
+          {l:'رصيد افتتاحي',v:fmt(openBal),c:'var(--info)'},
+          {l:'إجمالي الفواتير',v:fmt(totalInv),c:'var(--danger)'},
+          {l:'إجمالي المدفوع',v:fmt(totalPaid),c:'var(--success)'},
+          {l:'الرصيد الحالي',v:fmt(Math.abs(balance)),c:balance>0?'var(--danger)':balance<0?'var(--success)':'var(--text-gray)'},
+        ].map(x=>`<div style="padding:10px 14px;border-left:1px solid var(--border);text-align:center;"><div style="font-size:10px;color:var(--text-gray);">${x.l}</div><div style="font-size:14px;font-weight:800;color:${x.c};">${x.v} ج.م</div></div>`).join('')}
+      </div>
+      <div style="overflow-x:auto;max-height:400px;overflow-y:auto;">
+        <table><thead><tr><th>التاريخ</th><th>البيان</th><th>مدين (علينا)</th><th>دائن (سداد)</th><th>الرصيد</th></tr></thead>
+        ${openBal?`<tbody><tr style="background:var(--info-light);"><td colspan="2" style="font-weight:700;">رصيد افتتاحي</td><td style="font-weight:800;color:var(--info);text-align:left;">${fmt(openBal)} ج.م</td><td>—</td><td style="font-weight:800;color:var(--info);text-align:left;">${fmt(openBal)} ج.م</td></tr>${rows}</tbody>`:
+        `<tbody>${rows||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-gray);">لا توجد حركات</td></tr>'}</tbody>`}
+        </table>
+      </div>
+    </div>`;
+  document.getElementById('stmtModal').style.display='flex';
+}
+
+function printStmt(){
+  const content=document.getElementById('printStmtArea')?.innerHTML||'';
+  const w=window.open('','_blank');
+  w.document.write(`<html dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:'Cairo',sans-serif;font-size:12px;}table{width:100%;border-collapse:collapse;}th,td{padding:7px 10px;border:1px solid #ddd;text-align:right;}th{background:#f5f5f5;}</style></head><body>${content}</body></html>`);
+  w.document.close();w.print();
+}
+
+// ==================== HELPERS ====================
+function genSupCode(){return'VND-'+(suppliers.length+1).toString().padStart(4,'0');}
+function genInvCode(){return'INV-VND-'+(invoices.length+1).toString().padStart(4,'0');}
+
+// ==================== TOAST ====================
+function showToast(msg,type='success'){
+  const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className=`toast ${type}`;
+  const icons={success:'fa-check-circle',error:'fa-times-circle',warning:'fa-exclamation-triangle'};
+  t.innerHTML=`<i class="fas ${icons[type]||'fa-info-circle'}"></i> ${msg}`;c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2500);
+}
+
+// ==================== SEED ====================
+async function seedIfEmpty(){
+  if(suppliers.length>0)return;
+  const sups=[
+    {id:'vnd_1',name:'مصنع الخرسانة الحديثة',code:'VND-0001',category:'materials',phone:'0223456789',email:'info@concrete.com',contactPerson:'محمود علي',taxNumber:'123456789',openingBalance:50000,color:'#F97316',address:'القاهرة الصناعية',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'vnd_2',name:'شركة الحديد والصلب',code:'VND-0002',category:'materials',phone:'0112345678',email:'',contactPerson:'أحمد فؤاد',taxNumber:'',openingBalance:0,color:'#5B4FE8',address:'',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'vnd_3',name:'مؤسسة النقل والمعدات',code:'VND-0003',category:'equipment',phone:'0155443322',email:'',contactPerson:'خالد سامي',taxNumber:'',openingBalance:20000,color:'#22C55E',address:'',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const s of sups)await dbPut(ST.SUPPLIERS,s);
+  suppliers=[...sups];
+
+  const projIds=projects.slice(0,2).map(p=>p.id);
+  const today=new Date().toISOString().split('T')[0];
+  const invs=[
+    {id:'sinv_1',supplierId:'vnd_1',code:'INV-VND-0001',refNo:'FC-2025-001',date:today,dueDate:new Date(Date.now()+30*86400000).toISOString().split('T')[0],projectId:projIds[0]||null,catId:null,status:'partial',items:[{desc:'خرسانة جاهزة 50 م3',qty:50,unitPrice:1200,total:60000},{desc:'رمل وزلط',qty:1,unitPrice:8000,total:8000}],taxRate:14,discount:0,total:77520,notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'sinv_2',supplierId:'vnd_2',code:'INV-VND-0002',refNo:'STL-100',date:today,dueDate:null,projectId:projIds[0]||null,catId:null,status:'unpaid',items:[{desc:'حديد تسليح 10 طن',qty:10,unitPrice:18000,total:180000}],taxRate:14,discount:0,total:205200,notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'sinv_3',supplierId:'vnd_3',code:'INV-VND-0003',refNo:'',date:new Date(Date.now()-15*86400000).toISOString().split('T')[0],dueDate:null,projectId:null,catId:null,status:'paid',items:[{desc:'إيجار رافعة شهر مارس',qty:1,unitPrice:25000,total:25000}],taxRate:14,discount:0,total:28500,notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const i of invs)await dbPut(ST.SUP_INVOICES,i);
+  invoices=[...invs];
+
+  const pays=[
+    {id:'spay_1',supplierId:'vnd_1',invoiceId:'sinv_1',amount:30000,date:today,method:'check',refNo:'CHQ-2025-001',treasuryId:null,notes:'دفعة أولى',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'spay_2',supplierId:'vnd_3',invoiceId:'sinv_3',amount:28500,date:new Date(Date.now()-14*86400000).toISOString().split('T')[0],method:'transfer',refNo:'TRF-001',treasuryId:null,notes:'سداد كامل',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const p of pays)await dbPut(ST.SUP_PAYMENTS,p);
+  payments=[...pays];
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded',async()=>{
+  try{
+    await initDB();
+    const settings=await dbGetK(ST.SETTINGS,'main');
+    if(settings?.company?.name){document.getElementById('sCompanyName').textContent=settings.company.name;document.getElementById('sLogoIcon').textContent=settings.company.name.charAt(0);}
+    categories=await dbAll(ST.CATS);
+    projects=await dbAll(ST.PROJECTS);
+    treasuries=await dbAll(ST.TREASURIES);
+    suppliers=await dbAll(ST.SUPPLIERS);
+    invoices=await dbAll(ST.SUP_INVOICES);
+    payments=await dbAll(ST.SUP_PAYMENTS);
+    await seedIfEmpty();
+    updateStats();
+    renderSupplierList();
+    // init invoice items
+    invItems=[{desc:'',qty:1,unitPrice:0,total:0}];
+  }catch(e){showToast('خطأ في التحميل','error');console.error(e);}
+});
+</script>
+</body>
+</html>

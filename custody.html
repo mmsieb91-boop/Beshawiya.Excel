@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>العهد المالية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B4FE8;--primary-light:#7B72F0;--primary-xlight:#EEF0FF;--primary-dark:#3D34C4;
+  --bg:#F5F6FA;--white:#FFFFFF;--text-dark:#1A1A2E;--text-mid:#4A5568;--text-gray:#8892A4;
+  --border:#E8EAF0;--success:#22C55E;--success-light:#DCFCE7;--danger:#EF4444;--danger-light:#FEE2E2;
+  --warning:#F59E0B;--warning-light:#FEF3C7;--info:#3B82F6;--info-light:#DBEAFE;
+  --sidebar-w:260px;--shadow-sm:0 1px 3px rgba(91,79,232,.08);--shadow-md:0 4px 16px rgba(91,79,232,.12);
+  --shadow-lg:0 8px 32px rgba(91,79,232,.18);--radius:12px;--radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text-dark);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;bottom:0;z-index:100;box-shadow:var(--shadow-md);}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-icon{width:38px;height:38px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:15px;flex-shrink:0;}
+.logo-name{font-weight:800;font-size:13px;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}
+.logo-sub{font-size:10px;color:var(--text-gray);}
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 0;}
+.nav-section{padding:8px 16px 3px;font-size:10px;font-weight:700;color:var(--text-gray);letter-spacing:.5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;color:var(--text-mid);position:relative;}
+.nav-item:hover{background:var(--primary-xlight);color:var(--primary);}
+.nav-item.active{background:var(--primary-xlight);color:var(--primary);font-weight:700;}
+.nav-item.active::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;background:var(--primary);border-radius:3px 0 0 3px;}
+.nav-item i{width:18px;text-align:center;font-size:14px;}
+.nav-badge{margin-right:auto;background:var(--primary);color:white;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:700;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;}
+
+/* MAIN */
+.main{margin-right:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-gray);}
+.breadcrumb span{color:var(--text-dark);font-weight:600;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.db-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-gray);padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:20px;}
+.db-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--primary);color:white;}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.btn-success{background:var(--success);color:white;}
+.btn-success:hover{background:#16A34A;}
+.btn-warning{background:var(--warning);color:white;}
+.btn-warning:hover{background:#D97706;}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:var(--primary-xlight);}
+.btn-ghost{background:var(--bg);color:var(--text-mid);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--border);}
+.btn-soft-danger{background:var(--danger-light);color:var(--danger);border:1px solid #FECACA;}
+.btn-soft-danger:hover{background:var(--danger);color:white;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-icon{padding:6px;width:30px;height:30px;justify-content:center;}
+
+/* CONTENT */
+.content{padding:22px;flex:1;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;animation:fadeInDown .4s ease;}
+.page-title{display:flex;align-items:center;gap:12px;}
+.page-title-icon{width:42px;height:42px;background:var(--warning);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:17px;}
+.page-title h1{font-size:19px;font-weight:800;}
+.page-title p{font-size:11px;color:var(--text-gray);margin-top:1px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;animation:fadeInDown .4s ease .05s both;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-sm);transition:all .2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.stat-val{font-size:20px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text-gray);font-weight:600;margin-top:2px;}
+
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 360px;gap:16px;animation:fadeInUp .4s ease .1s both;}
+
+/* CUSTODY LIST */
+.custody-list-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+
+/* CUSTODY CARD */
+.custody-card{border-bottom:1px solid var(--border);padding:14px 16px;cursor:pointer;transition:all .2s;position:relative;}
+.custody-card:last-child{border-bottom:none;}
+.custody-card:hover{background:var(--primary-xlight);}
+.custody-card.selected{background:var(--primary-xlight);border-right:3px solid var(--primary);}
+.cc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.cc-sup{display:flex;align-items:center;gap:8px;}
+.sup-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0;}
+.cc-name{font-size:13px;font-weight:800;color:var(--text-dark);}
+.cc-code{font-size:10px;font-weight:700;color:var(--primary);direction:ltr;}
+.cc-progress{margin-bottom:8px;}
+.progress-bar{height:6px;background:var(--border);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:10px;transition:width .5s;}
+.cc-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;}
+.cc-meta{display:flex;gap:12px;}
+.cc-meta span{display:flex;align-items:center;gap:3px;color:var(--text-gray);}
+.cc-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;}
+.s-open{background:var(--success-light);color:#16A34A;}
+.s-closed{background:var(--border);color:var(--text-gray);}
+.s-overdrawn{background:var(--danger-light);color:var(--danger);}
+.s-pending{background:var(--warning-light);color:#92400E;}
+
+/* DETAIL PANEL */
+.detail-panel{display:flex;flex-direction:column;gap:14px;}
+
+/* SUPERVISOR CARD */
+.sup-detail-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+.sup-hero{background:linear-gradient(135deg,var(--warning),#F97316);padding:18px;color:white;position:relative;overflow:hidden;}
+.sup-hero::before{content:'';position:absolute;top:-20px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07);}
+.sup-hero-content{position:relative;z-index:1;display:flex;align-items:center;gap:12px;}
+.sup-hero-avatar{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex-shrink:0;}
+.sup-hero-name{font-size:16px;font-weight:800;}
+.sup-hero-code{font-size:11px;opacity:.8;direction:ltr;}
+.sup-hero-role{font-size:11px;opacity:.7;}
+
+/* BALANCE METERS */
+.balance-meters{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px;}
+.meter-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px;text-align:center;}
+.meter-val{font-size:16px;font-weight:800;margin-bottom:2px;}
+.meter-lbl{font-size:10px;color:var(--text-gray);font-weight:600;}
+
+/* TRANSACTIONS MINI */
+.trans-mini{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;max-height:340px;display:flex;flex-direction:column;}
+.trans-mini-body{overflow-y:auto;flex:1;}
+.trans-mini-row{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);transition:all .2s;}
+.trans-mini-row:hover{background:var(--bg);}
+.trans-mini-row:last-child{border-bottom:none;}
+.trans-mini-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.trans-mini-desc{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.trans-mini-date{font-size:10px;color:var(--text-gray);}
+.trans-mini-amt{font-size:13px;font-weight:800;flex-shrink:0;}
+
+/* PROJECTS MINI */
+.proj-mini-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);}
+.proj-mini-row:last-child{border-bottom:none;}
+
+/* PANEL HEADER */
+.panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.panel-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;}
+.panel-title i{color:var(--primary);}
+
+/* TOOLBAR */
+.toolbar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);}
+.search-wrap{position:relative;flex:1;min-width:160px;}
+.search-wrap input{width:100%;padding:7px 30px 7px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:12px;background:var(--white);outline:none;transition:all .2s;}
+.search-wrap input:focus{border-color:var(--primary);}
+.search-wrap i{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--text-gray);font-size:12px;}
+.filter-select{padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Cairo',sans-serif;font-size:12px;background:var(--white);color:var(--text-dark);outline:none;cursor:pointer;}
+.filter-select:focus{border-color:var(--primary);}
+
+/* EMPTY */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:12px;text-align:center;}
+.empty-icon{width:64px;height:64px;background:var(--primary-xlight);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--primary);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;}
+.modal{background:var(--white);border-radius:var(--radius);width:600px;max-width:96vw;box-shadow:var(--shadow-lg);animation:modalIn .25s ease;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-lg{width:720px;}
+.modal-sm{width:420px;}
+.modal-header{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.modal-close{width:30px;height:30px;border-radius:7px;border:none;background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-gray);font-size:14px;transition:all .2s;}
+.modal-close:hover{background:var(--danger-light);color:var(--danger);}
+.modal-body{padding:18px;overflow-y:auto;flex:1;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr;}
+.full{grid-column:1/-1;}
+label{font-size:11px;font-weight:700;color:var(--text-mid);}
+label .req{color:var(--danger);}
+input,select,textarea{font-family:'Cairo',sans-serif;font-size:13px;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-dark);transition:all .2s;outline:none;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(91,79,232,.1);}
+textarea{resize:vertical;min-height:65px;}
+.input-prefix{display:flex;align-items:stretch;}
+.prefix-label{background:var(--primary-xlight);border:1.5px solid var(--border);border-left:none;padding:0 10px;font-size:12px;font-weight:700;color:var(--primary);display:flex;align-items:center;border-radius:0 var(--radius-sm) var(--radius-sm) 0;white-space:nowrap;}
+.prefix-input{border-radius:var(--radius-sm) 0 0 var(--radius-sm)!important;flex:1;}
+
+/* SECTION TITLE */
+.section-title{font-size:11px;font-weight:700;color:var(--text-gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-p{background:var(--primary-xlight);color:var(--primary);}
+.badge-g{background:var(--success-light);color:#16A34A;}
+.badge-o{background:var(--warning-light);color:#92400E;}
+.badge-r{background:var(--danger-light);color:var(--danger);}
+.badge-b{background:var(--info-light);color:#1D4ED8;}
+
+/* INFO BOX */
+.info-box{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:12px;}
+.info-box.warn{background:var(--warning-light);color:#92400E;border:1px solid #FDE68A;}
+.info-box.info{background:var(--info-light);color:#1D4ED8;border:1px solid #BFDBFE;}
+.info-box.success{background:var(--success-light);color:#166534;border:1px solid #BBF7D0;}
+.info-box.danger{background:var(--danger-light);color:#991B1B;border:1px solid #FECACA;}
+
+/* PROJECT CHECKBOX */
+.proj-check-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-bottom:6px;}
+.proj-check-item:hover,.proj-check-item.checked{border-color:var(--primary);background:var(--primary-xlight);}
+.proj-check-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--primary);flex-shrink:0;}
+.proj-check-label{font-size:12px;font-weight:600;flex:1;}
+.proj-check-code{font-size:10px;color:var(--primary);font-weight:700;direction:ltr;}
+
+/* STATEMENT */
+.stmt-table table{width:100%;border-collapse:collapse;font-size:12px;}
+.stmt-table th{background:var(--bg);padding:8px 12px;text-align:right;font-weight:700;font-size:11px;color:var(--text-gray);border-bottom:2px solid var(--border);}
+.stmt-table td{padding:8px 12px;border-bottom:1px solid var(--border);}
+
+/* SUPERVISOR SELECT */
+.sup-select-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:200px;overflow-y:auto;}
+.sup-option{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.sup-option:hover,.sup-option.selected{border-color:var(--primary);background:var(--primary-xlight);}
+.sup-option-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.toast{background:var(--text-dark);color:white;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-lg);animation:toastIn .3s ease;min-width:200px;justify-content:center;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+.toast.warning{background:var(--warning);color:var(--text-dark);}
+
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary-light)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon" id="sLogoIcon">م</div>
+    <div>
+      <div class="logo-name" id="sCompanyName">اسم الشركة</div>
+      <div class="logo-sub">نظام إدارة المشاريع</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">الرئيسية</div>
+    <div class="nav-item"><i class="fas fa-chart-pie"></i> لوحة التحكم</div>
+    <div class="nav-section">إدارة المشاريع</div>
+    <div class="nav-item"><i class="fas fa-folder-open"></i> المشاريع</div>
+    <div class="nav-item"><i class="fas fa-tasks"></i> المهام</div>
+    <div class="nav-item"><i class="fas fa-sitemap"></i> الفئات</div>
+    <div class="nav-section">المالية</div>
+    <div class="nav-item active"><i class="fas fa-briefcase"></i> العهد المالية <span class="nav-badge">هنا</span></div>
+    <div class="nav-item"><i class="fas fa-cash-register"></i> الخزنة</div>
+    <div class="nav-item"><i class="fas fa-file-invoice-dollar"></i> المستخلصات</div>
+    <div class="nav-section">الأطراف</div>
+    <div class="nav-item"><i class="fas fa-truck"></i> الموردين</div>
+    <div class="nav-item"><i class="fas fa-handshake"></i> العملاء</div>
+    <div class="nav-item"><i class="fas fa-hard-hat"></i> المشرفين</div>
+    <div class="nav-section">المخازن</div>
+    <div class="nav-item"><i class="fas fa-warehouse"></i> المخازن</div>
+    <div class="nav-item"><i class="fas fa-exchange-alt"></i> التحويلات</div>
+    <div class="nav-section">الإعدادات</div>
+    <div class="nav-item"><i class="fas fa-cog"></i> الإعدادات العامة</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar">أ</div>
+    <div><div style="font-size:12px;font-weight:700;">المدير العام</div><div style="font-size:10px;color:var(--text-gray);">أدمن النظام</div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      <i class="fas fa-home"></i> الرئيسية
+      <i class="fas fa-chevron-left"></i>
+      <span>العهد المالية</span>
+    </div>
+    <div class="topbar-right">
+      <div class="db-status"><div class="db-dot"></div> IndexedDB</div>
+      <button class="btn btn-ghost btn-sm" onclick="openSupervisorModal(null)"><i class="fas fa-user-plus"></i> مشرف جديد</button>
+      <button class="btn btn-warning" onclick="openCustodyModal(null)"><i class="fas fa-plus"></i> عهدة جديدة</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- HEADER -->
+    <div class="page-header">
+      <div class="page-title">
+        <div class="page-title-icon"><i class="fas fa-briefcase"></i></div>
+        <div>
+          <h1>العهد المالية</h1>
+          <p>كل مشرف بياخد عهدة مالية ويصرف منها على مشاريعه — الأدمن بيسجل كل الحركات</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon" style="background:var(--warning-light);color:var(--warning);"><i class="fas fa-briefcase"></i></div><div><div class="stat-val" id="stTotal">0</div><div class="stat-lbl">إجمالي العهد</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--success-light);color:var(--success);"><i class="fas fa-lock-open"></i></div><div><div class="stat-val" id="stOpen">0</div><div class="stat-lbl">عهد مفتوحة</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--border);color:var(--text-gray);"><i class="fas fa-lock"></i></div><div><div class="stat-val" id="stClosed">0</div><div class="stat-lbl">عهد مغلقة</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--primary-xlight);color:var(--primary);"><i class="fas fa-coins"></i></div><div><div class="stat-val" id="stTotalAmt">0</div><div class="stat-lbl">إجمالي العهد (ج.م)</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--danger-light);color:var(--danger);"><i class="fas fa-minus-circle"></i></div><div><div class="stat-val" id="stTotalSpent">0</div><div class="stat-lbl">إجمالي المصروف (ج.م)</div></div></div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+      <!-- LEFT: CUSTODY LIST -->
+      <div>
+        <!-- TOOLBAR -->
+        <div class="toolbar" style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;border-bottom:none;">
+          <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="بحث في العهد والمشرفين..." oninput="renderCustodyList()">
+            <i class="fas fa-search"></i>
+          </div>
+          <select class="filter-select" id="filterStatus" onchange="renderCustodyList()">
+            <option value="">كل الحالات</option>
+            <option value="open">مفتوحة</option>
+            <option value="closed">مغلقة</option>
+            <option value="overdrawn">منسحبة</option>
+          </select>
+          <select class="filter-select" id="filterSup" onchange="renderCustodyList()">
+            <option value="">كل المشرفين</option>
+          </select>
+        </div>
+        <div class="custody-list-panel" id="custodyListPanel" style="border-radius:0 0 var(--radius) var(--radius);">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT: DETAIL -->
+      <div class="detail-panel" id="detailPanel">
+        <!-- EMPTY STATE -->
+        <div id="detailEmpty" style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);">
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-hand-pointer"></i></div>
+            <div style="font-size:14px;font-weight:700;color:var(--text-mid);">اختر عهدة</div>
+            <div style="font-size:12px;color:var(--text-gray);max-width:200px;text-align:center;line-height:1.7;">اضغط على أي عهدة من القائمة لعرض تفاصيلها وتسجيل الصرف</div>
+            <button class="btn btn-warning" onclick="openCustodyModal(null)"><i class="fas fa-plus"></i> عهدة جديدة</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTODY MODAL -->
+<div class="modal-overlay" id="custodyModal" style="display:none;" onclick="if(event.target===this)closeCustodyModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="custodyModalTitle"><i class="fas fa-briefcase" style="color:var(--warning);"></i> عهدة جديدة</div>
+      <button class="modal-close" onclick="closeCustodyModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cEditId">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>المشرف <span class="req">*</span></label>
+          <select id="cSupervisor">
+            <option value="">اختر المشرف</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>كود العهدة</label>
+          <input type="text" id="cCode" readonly style="direction:ltr;font-weight:700;color:var(--primary);background:var(--primary-xlight);">
+        </div>
+        <div class="form-group">
+          <label>تاريخ العهدة <span class="req">*</span></label>
+          <input type="date" id="cDate">
+        </div>
+        <div class="form-group full">
+          <label>مبلغ العهدة <span class="req">*</span></label>
+          <div class="input-prefix">
+            <input type="number" id="cAmount" class="prefix-input" placeholder="0.00" min="0" step="0.01" oninput="updateCustodyCalc()">
+            <span class="prefix-label">ج.م</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>الخزنة المصدر <span class="req">*</span></label>
+          <select id="cTreasury"><option value="">اختر الخزنة</option></select>
+        </div>
+        <div class="form-group">
+          <label>الحد الأقصى للصرف</label>
+          <div class="input-prefix">
+            <input type="number" id="cMaxSpend" class="prefix-input" placeholder="نفس مبلغ العهدة" min="0">
+            <span class="prefix-label">ج.م</span>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>المشاريع المرتبطة</label>
+          <div style="font-size:11px;color:var(--text-gray);margin-bottom:6px;">اختر المشاريع اللي هيصرف عليها المشرف من العهدة دي</div>
+          <div id="projCheckList" style="max-height:160px;overflow-y:auto;"></div>
+        </div>
+        <div class="form-group full">
+          <label>ملاحظات</label>
+          <textarea id="cNotes" placeholder="ملاحظات إضافية..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCustodyModal()">إلغاء</button>
+      <button class="btn btn-warning" onclick="saveCustody()"><i class="fas fa-save"></i> حفظ العهدة</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPEND MODAL -->
+<div class="modal-overlay" id="spendModal" style="display:none;" onclick="if(event.target===this)closeSpendModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="spendModalTitle"><i class="fas fa-arrow-up" style="color:var(--danger);"></i> تسجيل صرف على العهدة</div>
+      <button class="modal-close" onclick="closeSpendModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sEditId">
+      <input type="hidden" id="sCustodyId">
+
+      <!-- CUSTODY BALANCE INFO -->
+      <div id="spendBalanceInfo" class="info-box info" style="margin-bottom:14px;">
+        <i class="fas fa-info-circle"></i>
+        <span>الرصيد المتاح: <strong id="spendAvailable">0 ج.م</strong></span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>البيان <span class="req">*</span></label>
+          <input type="text" id="sDesc" placeholder="وصف تفصيلي للصرف...">
+        </div>
+        <div class="form-group">
+          <label>المبلغ <span class="req">*</span></label>
+          <div class="input-prefix">
+            <input type="number" id="sAmount" class="prefix-input" placeholder="0.00" min="0" step="0.01" oninput="checkSpendAmount()">
+            <span class="prefix-label">ج.م</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>التاريخ</label>
+          <input type="date" id="sDate">
+        </div>
+        <div class="form-group">
+          <label>المشروع</label>
+          <select id="sProject"><option value="">— بدون مشروع —</option></select>
+        </div>
+        <div class="form-group">
+          <label>الفئة</label>
+          <select id="sCategory"><option value="">— اختر الفئة —</option></select>
+        </div>
+        <div class="form-group">
+          <label>رقم المرجع / الفاتورة</label>
+          <input type="text" id="sRef" placeholder="رقم الإيصال أو الفاتورة">
+        </div>
+        <div class="form-group">
+          <label>كود الحركة</label>
+          <input type="text" id="sCode" style="direction:ltr;font-weight:700;color:var(--primary);">
+        </div>
+        <div class="form-group full">
+          <label>ملاحظات</label>
+          <textarea id="sNotes" placeholder="ملاحظات..."></textarea>
+        </div>
+      </div>
+      <div id="spendWarning" style="display:none;" class="info-box" style="margin-top:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSpendModal()">إلغاء</button>
+      <button class="btn btn-danger" id="spendSaveBtn" onclick="saveSpend()"><i class="fas fa-save"></i> تسجيل الصرف</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECHARGE MODAL -->
+<div class="modal-overlay" id="rechargeModal" style="display:none;" onclick="if(event.target===this)closeRechargeModal()">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-plus-circle" style="color:var(--success);"></i> تعبئة العهدة</div>
+      <button class="modal-close" onclick="closeRechargeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rCustodyId">
+      <div class="form-group">
+        <label>المبلغ الإضافي <span class="req">*</span></label>
+        <div class="input-prefix">
+          <input type="number" id="rAmount" class="prefix-input" placeholder="0.00" min="0">
+          <span class="prefix-label">ج.م</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>الخزنة المصدر</label>
+        <select id="rTreasury"><option value="">اختر الخزنة</option></select>
+      </div>
+      <div class="form-group">
+        <label>التاريخ</label>
+        <input type="date" id="rDate">
+      </div>
+      <div class="form-group">
+        <label>ملاحظات</label>
+        <input type="text" id="rNotes" placeholder="سبب التعبئة...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeRechargeModal()">إلغاء</button>
+      <button class="btn btn-success" onclick="saveRecharge()"><i class="fas fa-plus"></i> تعبئة</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPERVISOR MODAL -->
+<div class="modal-overlay" id="supModal" style="display:none;" onclick="if(event.target===this)closeSupModal()">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="supModalTitle"><i class="fas fa-hard-hat" style="color:var(--primary);"></i> مشرف جديد</div>
+      <button class="modal-close" onclick="closeSupModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="supEditId">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>اسم المشرف <span class="req">*</span></label>
+          <input type="text" id="supName" placeholder="الاسم كاملاً">
+        </div>
+        <div class="form-group">
+          <label>كود المشرف</label>
+          <input type="text" id="supCode" readonly style="direction:ltr;font-weight:700;color:var(--primary);background:var(--primary-xlight);">
+        </div>
+        <div class="form-group">
+          <label>التليفون</label>
+          <input type="tel" id="supPhone" placeholder="01xxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>المسمى الوظيفي</label>
+          <select id="supRole">
+            <option value="supervisor">مشرف</option>
+            <option value="engineer">مهندس</option>
+            <option value="foreman">ريس عمال</option>
+            <option value="accountant">محاسب</option>
+            <option value="manager">مدير</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>لون الأفاتار</label>
+          <select id="supColor">
+            <option value="#5B4FE8">بنفسجي</option>
+            <option value="#22C55E">أخضر</option>
+            <option value="#F59E0B">برتقالي</option>
+            <option value="#EF4444">أحمر</option>
+            <option value="#3B82F6">أزرق</option>
+            <option value="#8B5CF6">بنفسجي فاتح</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>ملاحظات</label>
+          <input type="text" id="supNotes" placeholder="...">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSupModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveSupervisor()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATEMENT MODAL -->
+<div class="modal-overlay" id="stmtModal" style="display:none;" onclick="if(event.target===this)document.getElementById('stmtModal').style.display='none'">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-file-alt" style="color:var(--primary);"></i> كشف حساب مشرف</div>
+      <button class="modal-close" onclick="document.getElementById('stmtModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="stmtBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('stmtModal').style.display='none'">إغلاق</button>
+      <button class="btn btn-primary" onclick="printStatement()"><i class="fas fa-print"></i> طباعة</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="modal-overlay" id="confirmModal" style="display:none;">
+  <div class="modal modal-sm">
+    <div class="modal-body" style="text-align:center;padding:26px 22px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--danger-light);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--danger);"><i class="fas fa-trash-alt"></i></div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:5px;" id="confirmTitle">تأكيد</div>
+      <div style="font-size:12px;color:var(--text-gray);line-height:1.6;" id="confirmMsg">هل أنت متأكد؟</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('confirmModal').style.display='none'">إلغاء</button>
+      <button class="btn btn-soft-danger" id="confirmBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ==================== DB ====================
+const DB_NAME='ProjectManagementDB',DB_VER=4;
+const ST={SETTINGS:'settings',CATS:'categories',PROJECTS:'projects',TREASURIES:'treasuries',TRANS:'transactions',SUPERVISORS:'supervisors',CUSTODIES:'custodies',CUSTODY_TRANS:'custody_trans'};
+let db=null;
+
+async function initDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>{
+      const d=e.target.result;
+      [ST.SETTINGS,ST.CATS,ST.PROJECTS,ST.TREASURIES,ST.TRANS].forEach(s=>{
+        if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s===ST.SETTINGS?'key':'id'});
+      });
+      [ST.SUPERVISORS,ST.CUSTODIES,ST.CUSTODY_TRANS].forEach(s=>{
+        if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});
+      });
+    };
+    req.onsuccess=e=>{db=e.target.result;res(db);};
+    req.onerror=rej;
+  });
+}
+const dbAll=s=>new Promise((res,rej)=>{const tx=db.transaction(s,'readonly');const r=tx.objectStore(s).getAll();r.onsuccess=e=>res(e.target.result);r.onerror=rej;});
+const dbPut=(s,o)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readwrite');const r=tx.objectStore(s).put(o);r.onsuccess=()=>res();r.onerror=rej;});
+const dbDel=(s,k)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readwrite');const r=tx.objectStore(s).delete(k);r.onsuccess=()=>res();r.onerror=rej;});
+const dbGetK=(s,k)=>new Promise((res,rej)=>{const tx=db.transaction(s,'readonly');const r=tx.objectStore(s).get(k);r.onsuccess=e=>res(e.target.result?.value??null);r.onerror=rej;});
+
+// ==================== STATE ====================
+let supervisors=[],custodies=[],custodyTrans=[],categories=[],projects=[],treasuries=[];
+let selectedCustodyId=null;
+
+// ==================== HELPERS ====================
+const fmt=n=>Number(n||0).toLocaleString('ar-EG',{maximumFractionDigits:2});
+const fmtDate=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('ar-EG');};
+const uid=()=>'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
+const getSup=id=>supervisors.find(s=>s.id===id);
+const getCustody=id=>custodies.find(c=>c.id===id);
+const getProj=id=>projects.find(p=>p.id===id);
+const getCat=id=>categories.find(c=>c.id===id);
+const getTrs=id=>treasuries.find(t=>t.id===id);
+const roleLabels={supervisor:'مشرف',engineer:'مهندس',foreman:'ريس عمال',accountant:'محاسب',manager:'مدير'};
+
+// ==================== BALANCE CALC ====================
+function calcCustodyBalance(custodyId){
+  const c=getCustody(custodyId);if(!c)return{total:0,spent:0,remaining:0,recharges:0};
+  const txs=custodyTrans.filter(t=>t.custodyId===custodyId&&!t.deleted);
+  const recharges=txs.filter(t=>t.type==='recharge').reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const spent=txs.filter(t=>t.type==='spend').reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const total=parseFloat(c.amount||0)+recharges;
+  const remaining=total-spent;
+  return{total,spent,remaining,recharges};
+}
+
+function getCustodyStatus(custodyId){
+  if(!custodyId)return'open';
+  const c=getCustody(custodyId);
+  if(!c)return'open';
+  if(c.status==='closed')return'closed';
+  const{remaining}=calcCustodyBalance(custodyId);
+  if(remaining<0)return'overdrawn';
+  return'open';
+}
+
+// ==================== STATS ====================
+function updateStats(){
+  const open=custodies.filter(c=>getCustodyStatus(c.id)==='open'||getCustodyStatus(c.id)==='overdrawn').length;
+  const closed=custodies.filter(c=>c.status==='closed').length;
+  const totalAmt=custodies.reduce((s,c)=>s+parseFloat(c.amount||0),0);
+  const totalSpent=custodyTrans.filter(t=>t.type==='spend'&&!t.deleted).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  document.getElementById('stTotal').textContent=custodies.length;
+  document.getElementById('stOpen').textContent=open;
+  document.getElementById('stClosed').textContent=closed;
+  document.getElementById('stTotalAmt').textContent=fmt(totalAmt);
+  document.getElementById('stTotalSpent').textContent=fmt(totalSpent);
+}
+
+// ==================== CUSTODY LIST ====================
+function renderCustodyList(){
+  const panel=document.getElementById('custodyListPanel');
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const fSt=document.getElementById('filterStatus').value;
+  const fSup=document.getElementById('filterSup').value;
+
+  let list=[...custodies];
+  if(q) list=list.filter(c=>{
+    const s=getSup(c.supervisorId);
+    return c.code.toLowerCase().includes(q)||(s?.name||'').toLowerCase().includes(q)||(c.notes||'').toLowerCase().includes(q);
+  });
+  if(fSt) list=list.filter(c=>getCustodyStatus(c.id)===fSt);
+  if(fSup) list=list.filter(c=>c.supervisorId===fSup);
+  list=list.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  if(!list.length){
+    panel.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="fas fa-briefcase"></i></div><div style="font-weight:700;color:var(--text-mid);">لا توجد عهد</div><div style="font-size:12px;color:var(--text-gray);">اضغط "عهدة جديدة" للبدء</div></div>`;
+    return;
+  }
+
+  const statusMap={open:{label:'مفتوحة',cls:'s-open'},closed:{label:'مغلقة',cls:'s-closed'},overdrawn:{label:'رصيد سالب',cls:'s-overdrawn'},pending:{label:'معلقة',cls:'s-pending'}};
+
+  panel.innerHTML=list.map(c=>{
+    const sup=getSup(c.supervisorId);
+    const{total,spent,remaining}=calcCustodyBalance(c.id);
+    const pct=total>0?Math.min(100,Math.round((spent/total)*100)):0;
+    const status=getCustodyStatus(c.id);
+    const st=statusMap[status]||statusMap.open;
+    const isSelected=c.id===selectedCustodyId;
+    const projCount=(c.projectIds||[]).length;
+    const spendCount=custodyTrans.filter(t=>t.custodyId===c.id&&t.type==='spend'&&!t.deleted).length;
+    const progressColor=pct>=90?'var(--danger)':pct>=70?'var(--warning)':'var(--success)';
+    return`<div class="custody-card ${isSelected?'selected':''}" onclick="selectCustody('${c.id}')">
+      <div class="cc-header">
+        <div class="cc-sup">
+          <div class="sup-avatar" style="background:${sup?.color||'var(--primary)'};">${(sup?.name||'?').charAt(0)}</div>
+          <div>
+            <div class="cc-name">${sup?.name||'مشرف غير محدد'}</div>
+            <div class="cc-code">${c.code}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <span class="cc-status ${st.cls}">${st.label}</span>
+          <span style="font-size:12px;font-weight:800;color:${remaining>=0?'var(--success)':'var(--danger)'};">${fmt(Math.abs(remaining))} ج.م ${remaining<0?'⚠️':''}</span>
+        </div>
+      </div>
+      <div class="cc-progress">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-gray);margin-bottom:4px;">
+          <span>المصروف ${fmt(spent)} / ${fmt(total)} ج.م</span>
+          <span style="font-weight:700;color:${progressColor};">${pct}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor};"></div></div>
+      </div>
+      <div class="cc-footer">
+        <div class="cc-meta">
+          <span><i class="fas fa-calendar" style="color:var(--primary);"></i>${fmtDate(c.date)}</span>
+          <span><i class="fas fa-folder" style="color:var(--warning);"></i>${projCount} مشروع</span>
+          <span><i class="fas fa-receipt" style="color:var(--success);"></i>${spendCount} صرفية</span>
+        </div>
+        <div style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+          <button class="btn btn-icon btn-ghost btn-sm" onclick="openEditCustody('${c.id}')" title="تعديل"><i class="fas fa-pen" style="font-size:11px;color:var(--warning);"></i></button>
+          <button class="btn btn-icon btn-ghost btn-sm" onclick="confirmDeleteCustody('${c.id}')" title="حذف"><i class="fas fa-trash" style="font-size:11px;color:var(--danger);"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== SELECT CUSTODY ====================
+function selectCustody(id){
+  selectedCustodyId=id;
+  renderCustodyList();
+  renderDetail(id);
+}
+
+// ==================== DETAIL ====================
+function renderDetail(id){
+  const c=getCustody(id);if(!c)return;
+  const sup=getSup(c.supervisorId);
+  const{total,spent,remaining,recharges}=calcCustodyBalance(id);
+  const status=getCustodyStatus(id);
+  const txs=custodyTrans.filter(t=>t.custodyId===id&&!t.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const spends=txs.filter(t=>t.type==='spend');
+  const recs=txs.filter(t=>t.type==='recharge');
+  const pct=total>0?Math.min(100,Math.round((spent/total)*100)):0;
+  const progressColor=pct>=90?'var(--danger)':pct>=70?'var(--warning)':'var(--success)';
+  const statusLabels={open:'مفتوحة',closed:'مغلقة',overdrawn:'رصيد سالب'};
+
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('detailEmpty').style.display='none';
+
+  panel.innerHTML=`
+  <!-- SUP CARD -->
+  <div class="sup-detail-card">
+    <div class="sup-hero">
+      <div style="position:absolute;top:0;right:0;left:0;bottom:0;background:linear-gradient(135deg,${sup?.color||'var(--warning)'},${sup?.color||'#F97316'});"></div>
+      <div class="sup-hero-content">
+        <div class="sup-hero-avatar">${(sup?.name||'?').charAt(0)}</div>
+        <div style="flex:1;">
+          <div class="sup-hero-name">${sup?.name||'غير محدد'}</div>
+          <div class="sup-hero-role">${roleLabels[sup?.role]||''}</div>
+          <div class="sup-hero-code">${c.code}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
+          <span style="background:rgba(255,255,255,.25);color:white;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;">${statusLabels[status]||status}</span>
+          ${status!=='closed'?`<button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;font-size:11px;" onclick="openRechargeModal('${id}')"><i class="fas fa-plus"></i> تعبئة</button>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="balance-meters">
+      <div class="meter-card"><div class="meter-val" style="color:var(--primary);">${fmt(total)}</div><div class="meter-lbl">إجمالي العهدة (ج.م)</div></div>
+      <div class="meter-card"><div class="meter-val" style="color:var(--danger);">${fmt(spent)}</div><div class="meter-lbl">إجمالي المصروف</div></div>
+      <div class="meter-card"><div class="meter-val" style="color:${remaining>=0?'var(--success)':'var(--danger)'};">${fmt(Math.abs(remaining))}</div><div class="meter-lbl">الرصيد ${remaining<0?'(سالب)':'المتبقي'}</div></div>
+      <div class="meter-card"><div class="meter-val" style="color:var(--info);">${fmt(recharges)}</div><div class="meter-lbl">التعبئات الإضافية</div></div>
+    </div>
+    <div style="padding:0 14px 10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-gray);margin-bottom:4px;"><span>نسبة الصرف</span><span style="font-weight:700;color:${progressColor};">${pct}%</span></div>
+      <div class="progress-bar" style="height:8px;"><div class="progress-fill" style="width:${pct}%;background:${progressColor};border-radius:10px;"></div></div>
+    </div>
+    ${remaining<0?`<div class="info-box danger" style="margin:0 14px 12px;"><i class="fas fa-exclamation-triangle"></i><span>⚠️ العهدة تجاوزت الحد! الزيادة: ${fmt(Math.abs(remaining))} ج.م</span></div>`:''}
+    ${remaining>=0&&remaining<(total*0.1)?`<div class="info-box warn" style="margin:0 14px 12px;"><i class="fas fa-exclamation-circle"></i><span>تحذير: الرصيد المتبقي أقل من 10% — يُنصح بالتعبئة</span></div>`:''}
+
+    <!-- ACTIONS -->
+    <div style="display:flex;gap:6px;padding:0 14px 14px;flex-wrap:wrap;">
+      ${status!=='closed'?`<button class="btn btn-danger btn-sm" onclick="openSpendModal('${id}')"><i class="fas fa-arrow-up"></i> تسجيل صرف</button>`:''}
+      <button class="btn btn-outline btn-sm" onclick="openStatementModal('${id}')"><i class="fas fa-file-alt"></i> كشف الحساب</button>
+      ${status==='open'?`<button class="btn btn-ghost btn-sm" onclick="closeCustody('${id}')"><i class="fas fa-lock"></i> إغلاق العهدة</button>`:
+        status==='closed'?`<button class="btn btn-ghost btn-sm" onclick="reopenCustody('${id}')"><i class="fas fa-lock-open"></i> إعادة فتح</button>`:''}
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  ${(c.projectIds||[]).length?`
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;">
+    <div class="panel-header"><div class="panel-title"><i class="fas fa-folder-open"></i> المشاريع المرتبطة (${(c.projectIds||[]).length})</div></div>
+    ${(c.projectIds||[]).map(pid=>{
+      const p=getProj(pid);if(!p)return'';
+      const pSpent=spends.filter(t=>t.projectId===pid).reduce((s,t)=>s+parseFloat(t.amount||0),0);
+      return`<div class="proj-mini-row">
+        <div style="width:26px;height:26px;border-radius:7px;background:var(--primary-xlight);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;"><i class="fas fa-folder-open"></i></div>
+        <div style="flex:1;"><div style="font-size:12px;font-weight:700;">${p.name}</div><div style="font-size:10px;color:var(--text-gray);">${p.code}</div></div>
+        <div style="font-size:12px;font-weight:800;color:var(--danger);">${fmt(pSpent)} ج.م</div>
+      </div>`;
+    }).join('')}
+  </div>`:''}
+
+  <!-- TRANSACTIONS -->
+  <div class="trans-mini">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-receipt"></i> آخر الحركات (${txs.length})</div>
+      ${status!=='closed'?`<button class="btn btn-primary btn-sm" onclick="openSpendModal('${id}')"><i class="fas fa-plus"></i> صرف</button>`:''}
+    </div>
+    <div class="trans-mini-body">
+      ${txs.length?txs.slice(0,15).map(tx=>{
+        const isSpend=tx.type==='spend';
+        const proj=getProj(tx.projectId);
+        return`<div class="trans-mini-row">
+          <div class="trans-mini-icon" style="background:${isSpend?'var(--danger-light)':'var(--success-light)'};color:${isSpend?'var(--danger)':'var(--success)'};">
+            <i class="fas ${isSpend?'fa-arrow-up':'fa-arrow-down'}"></i>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div class="trans-mini-desc">${tx.description||'—'}</div>
+            <div style="font-size:10px;color:var(--text-gray);display:flex;gap:6px;align-items:center;">
+              <span>${fmtDate(tx.date)}</span>
+              ${proj?`<span style="color:var(--primary);"><i class="fas fa-folder-open"></i>${proj.name}</span>`:''}
+              ${tx.code?`<span style="direction:ltr;">${tx.code}</span>`:''}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+            <div class="trans-mini-amt" style="color:${isSpend?'var(--danger)':'var(--success)'};">${isSpend?'-':'+'}${fmt(tx.amount)} ج.م</div>
+            <div style="display:flex;gap:3px;">
+              <button class="btn btn-icon btn-ghost" style="width:22px;height:22px;" onclick="openEditSpend('${tx.id}','${id}')"><i class="fas fa-pen" style="font-size:9px;color:var(--warning);"></i></button>
+              <button class="btn btn-icon btn-ghost" style="width:22px;height:22px;" onclick="confirmDeleteSpend('${tx.id}')"><i class="fas fa-trash" style="font-size:9px;color:var(--danger);"></i></button>
+            </div>
+          </div>
+        </div>`;
+      }).join(''):`<div class="empty-state" style="padding:24px;"><i class="fas fa-receipt" style="font-size:28px;"></i><p>لا توجد حركات بعد</p></div>`}
+    </div>
+  </div>`;
+}
+
+// ==================== CUSTODY MODAL ====================
+function openCustodyModal(editId){
+  const c=editId?getCustody(editId):null;
+  document.getElementById('cEditId').value=editId||'';
+  document.getElementById('cCode').value=c?.code||genCustodyCode();
+  document.getElementById('cDate').value=c?.date||new Date().toISOString().split('T')[0];
+  document.getElementById('cAmount').value=c?.amount||'';
+  document.getElementById('cMaxSpend').value=c?.maxSpend||'';
+  document.getElementById('cNotes').value=c?.notes||'';
+  // supervisor
+  const supSel=document.getElementById('cSupervisor');
+  supSel.innerHTML='<option value="">اختر المشرف</option>'+supervisors.map(s=>`<option value="${s.id}" ${c?.supervisorId===s.id?'selected':''}>${s.name}</option>`).join('');
+  // treasury
+  const trsSel=document.getElementById('cTreasury');
+  trsSel.innerHTML='<option value="">اختر الخزنة</option>'+treasuries.map(t=>`<option value="${t.id}" ${c?.treasuryId===t.id?'selected':''}>${t.name}</option>`).join('');
+  // projects
+  renderProjCheckList(c?.projectIds||[]);
+  document.getElementById('custodyModalTitle').innerHTML=`<i class="fas fa-briefcase" style="color:var(--warning);"></i> ${editId?'تعديل عهدة':'عهدة جديدة'}`;
+  document.getElementById('custodyModal').style.display='flex';
+}
+function closeCustodyModal(){document.getElementById('custodyModal').style.display='none';}
+function openEditCustody(id){openCustodyModal(id);}
+
+function renderProjCheckList(selectedIds=[]){
+  const list=document.getElementById('projCheckList');
+  if(!projects.length){list.innerHTML='<div style="font-size:12px;color:var(--text-gray);padding:8px;">لا توجد مشاريع مضافة بعد</div>';return;}
+  list.innerHTML=projects.map(p=>{
+    const checked=selectedIds.includes(p.id);
+    return`<div class="proj-check-item ${checked?'checked':''}" onclick="toggleProjCheck(this,'${p.id}')">
+      <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()">
+      <div style="flex:1;"><div class="proj-check-label">${p.name}</div><div class="proj-check-code">${p.code}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function toggleProjCheck(el,id){
+  const cb=el.querySelector('input[type=checkbox]');
+  cb.checked=!cb.checked;
+  el.classList.toggle('checked',cb.checked);
+}
+
+function getSelectedProjects(){
+  return Array.from(document.querySelectorAll('#projCheckList input[type=checkbox]:checked')).map(cb=>{
+    const item=cb.closest('.proj-check-item');
+    return item?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+  }).filter(Boolean);
+}
+
+async function saveCustody(){
+  const supId=document.getElementById('cSupervisor').value;
+  const amount=parseFloat(document.getElementById('cAmount').value||0);
+  if(!supId){showToast('اختر المشرف','error');return;}
+  if(!amount){showToast('ادخل مبلغ العهدة','error');return;}
+  const editId=document.getElementById('cEditId').value;
+  const c={
+    id:editId||uid(),
+    code:document.getElementById('cCode').value,
+    supervisorId:supId,
+    date:document.getElementById('cDate').value,
+    amount,
+    maxSpend:parseFloat(document.getElementById('cMaxSpend').value||0)||null,
+    treasuryId:document.getElementById('cTreasury').value||null,
+    projectIds:getSelectedProjects(),
+    notes:document.getElementById('cNotes').value,
+    status:'open',
+    createdAt:editId?(getCustody(editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.CUSTODIES,c);
+  if(editId){const i=custodies.findIndex(x=>x.id===editId);if(i!==-1)custodies[i]=c;}
+  else custodies.push(c);
+  closeCustodyModal();
+  updateStats();renderCustodyList();
+  if(selectedCustodyId===editId) renderDetail(editId);
+  showToast(editId?'✓ تم تعديل العهدة':'✓ تم إنشاء العهدة','success');
+}
+
+// ==================== CLOSE/REOPEN ====================
+async function closeCustody(id){
+  const c=getCustody(id);if(!c)return;
+  c.status='closed';c.updatedAt=new Date().toISOString();
+  await dbPut(ST.CUSTODIES,c);
+  const i=custodies.findIndex(x=>x.id===id);if(i!==-1)custodies[i]=c;
+  renderCustodyList();renderDetail(id);
+  showToast('✓ تم إغلاق العهدة','success');
+}
+async function reopenCustody(id){
+  const c=getCustody(id);if(!c)return;
+  c.status='open';c.updatedAt=new Date().toISOString();
+  await dbPut(ST.CUSTODIES,c);
+  const i=custodies.findIndex(x=>x.id===id);if(i!==-1)custodies[i]=c;
+  renderCustodyList();renderDetail(id);
+  showToast('✓ تم إعادة فتح العهدة','success');
+}
+
+function confirmDeleteCustody(id){
+  const c=getCustody(id);
+  document.getElementById('confirmTitle').textContent='حذف العهدة';
+  document.getElementById('confirmMsg').textContent=`هل تحذف عهدة "${getSup(c?.supervisorId)?.name||'—'}"؟ سيتم حذف كل حركاتها.`;
+  document.getElementById('confirmBtn').onclick=()=>deleteCustody(id);
+  document.getElementById('confirmModal').style.display='flex';
+}
+async function deleteCustody(id){
+  document.getElementById('confirmModal').style.display='none';
+  await dbDel(ST.CUSTODIES,id);
+  custodies=custodies.filter(c=>c.id!==id);
+  const toDelTx=custodyTrans.filter(t=>t.custodyId===id).map(t=>t.id);
+  for(const tid of toDelTx)await dbDel(ST.CUSTODY_TRANS,tid);
+  custodyTrans=custodyTrans.filter(t=>t.custodyId!==id);
+  if(selectedCustodyId===id){selectedCustodyId=null;document.getElementById('detailEmpty').style.display='flex';document.getElementById('detailPanel').innerHTML=document.getElementById('detailEmpty').outerHTML;}
+  updateStats();renderCustodyList();
+  showToast('✓ تم الحذف','success');
+}
+
+// ==================== SPEND ====================
+function openSpendModal(custodyId,editId=null){
+  const c=getCustody(custodyId);if(!c)return;
+  const{remaining}=calcCustodyBalance(custodyId);
+  const tx=editId?custodyTrans.find(t=>t.id===editId):null;
+  document.getElementById('sCustodyId').value=custodyId;
+  document.getElementById('sEditId').value=editId||'';
+  document.getElementById('sDesc').value=tx?.description||'';
+  document.getElementById('sAmount').value=tx?.amount||'';
+  document.getElementById('sDate').value=tx?.date||new Date().toISOString().split('T')[0];
+  document.getElementById('sRef').value=tx?.refNo||'';
+  document.getElementById('sNotes').value=tx?.notes||'';
+  document.getElementById('sCode').value=tx?.code||genSpendCode();
+  document.getElementById('spendAvailable').textContent=fmt(remaining)+' ج.م';
+  document.getElementById('spendBalanceInfo').className=`info-box ${remaining<=0?'danger':'info'}`;
+  const spendWarning=document.getElementById('spendWarning');
+  spendWarning.style.display='none';
+  // projects
+  const projSel=document.getElementById('sProject');
+  projSel.innerHTML='<option value="">— بدون مشروع —</option>'+(c.projectIds||[]).map(pid=>{
+    const p=getProj(pid);return p?`<option value="${p.id}" ${tx?.projectId===p.id?'selected':''}>${p.name}</option>`:'';
+  }).join('');
+  // categories
+  const catSel=document.getElementById('sCategory');
+  catSel.innerHTML='<option value="">— اختر الفئة —</option>'+categories.map(cat=>`<option value="${cat.id}" ${tx?.catId===cat.id?'selected':''}>${cat.name}</option>`).join('');
+  document.getElementById('spendModalTitle').innerHTML=`<i class="fas fa-arrow-up" style="color:var(--danger);"></i> ${editId?'تعديل صرفية':'تسجيل صرف'} — ${getSup(c.supervisorId)?.name||''}`;
+  document.getElementById('spendModal').style.display='flex';
+}
+
+function openEditSpend(txId,custodyId){openSpendModal(custodyId,txId);}
+function closeSpendModal(){document.getElementById('spendModal').style.display='none';}
+
+function checkSpendAmount(){
+  const custodyId=document.getElementById('sCustodyId').value;
+  const{remaining}=calcCustodyBalance(custodyId);
+  const amount=parseFloat(document.getElementById('sAmount').value||0);
+  const warn=document.getElementById('spendWarning');
+  if(amount>remaining&&remaining>0){
+    warn.style.display='flex';
+    warn.className='info-box warn';
+    warn.innerHTML=`<i class="fas fa-exclamation-triangle"></i><span>المبلغ المدخل (${fmt(amount)} ج.م) أكبر من الرصيد المتاح (${fmt(remaining)} ج.م)</span>`;
+  } else if(amount>0&&remaining<=0){
+    warn.style.display='flex';
+    warn.className='info-box danger';
+    warn.innerHTML=`<i class="fas fa-times-circle"></i><span>العهدة لا يوجد بها رصيد كافٍ!</span>`;
+  } else {
+    warn.style.display='none';
+  }
+}
+
+async function saveSpend(){
+  const custodyId=document.getElementById('sCustodyId').value;
+  const editId=document.getElementById('sEditId').value;
+  const desc=document.getElementById('sDesc').value.trim();
+  const amount=parseFloat(document.getElementById('sAmount').value||0);
+  if(!desc){showToast('ادخل البيان','error');return;}
+  if(!amount||amount<=0){showToast('ادخل مبلغاً صحيحاً','error');return;}
+  const tx={
+    id:editId||uid(),
+    type:'spend',
+    custodyId,
+    description:desc,amount,
+    projectId:document.getElementById('sProject').value||null,
+    catId:document.getElementById('sCategory').value||null,
+    date:document.getElementById('sDate').value,
+    refNo:document.getElementById('sRef').value||null,
+    notes:document.getElementById('sNotes').value||null,
+    code:document.getElementById('sCode').value||genSpendCode(),
+    createdAt:editId?(custodyTrans.find(t=>t.id===editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.CUSTODY_TRANS,tx);
+  if(editId){const i=custodyTrans.findIndex(t=>t.id===editId);if(i!==-1)custodyTrans[i]=tx;}
+  else custodyTrans.push(tx);
+  closeSpendModal();
+  updateStats();renderCustodyList();renderDetail(custodyId);
+  showToast(editId?'✓ تم تعديل الصرفية':'✓ تم تسجيل الصرف','success');
+}
+
+function confirmDeleteSpend(txId){
+  const tx=custodyTrans.find(t=>t.id===txId);
+  document.getElementById('confirmTitle').textContent='حذف صرفية';
+  document.getElementById('confirmMsg').textContent=`هل تحذف صرفية "${tx?.description||'—'}" بمبلغ ${fmt(tx?.amount)} ج.م؟`;
+  document.getElementById('confirmBtn').onclick=()=>deleteSpend(txId);
+  document.getElementById('confirmModal').style.display='flex';
+}
+async function deleteSpend(txId){
+  document.getElementById('confirmModal').style.display='none';
+  const tx=custodyTrans.find(t=>t.id===txId);
+  await dbDel(ST.CUSTODY_TRANS,txId);
+  custodyTrans=custodyTrans.filter(t=>t.id!==txId);
+  updateStats();renderCustodyList();
+  if(tx?.custodyId===selectedCustodyId)renderDetail(selectedCustodyId);
+  showToast('✓ تم الحذف','success');
+}
+
+// ==================== RECHARGE ====================
+function openRechargeModal(custodyId){
+  document.getElementById('rCustodyId').value=custodyId;
+  document.getElementById('rAmount').value='';
+  document.getElementById('rDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('rNotes').value='';
+  const trsSel=document.getElementById('rTreasury');
+  trsSel.innerHTML='<option value="">اختر الخزنة</option>'+treasuries.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  document.getElementById('rechargeModal').style.display='flex';
+}
+function closeRechargeModal(){document.getElementById('rechargeModal').style.display='none';}
+
+async function saveRecharge(){
+  const custodyId=document.getElementById('rCustodyId').value;
+  const amount=parseFloat(document.getElementById('rAmount').value||0);
+  if(!amount||amount<=0){showToast('ادخل مبلغ التعبئة','error');return;}
+  const tx={
+    id:uid(),type:'recharge',custodyId,
+    description:'تعبئة عهدة',amount,
+    treasuryId:document.getElementById('rTreasury').value||null,
+    date:document.getElementById('rDate').value,
+    notes:document.getElementById('rNotes').value,
+    code:'RCH-'+Date.now().toString().slice(-6),
+    createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.CUSTODY_TRANS,tx);
+  custodyTrans.push(tx);
+  closeRechargeModal();
+  updateStats();renderCustodyList();renderDetail(custodyId);
+  showToast('✓ تم تعبئة العهدة','success');
+}
+
+// ==================== SUPERVISOR ====================
+function openSupervisorModal(editId){
+  const s=editId?getSup(editId):null;
+  document.getElementById('supEditId').value=editId||'';
+  document.getElementById('supName').value=s?.name||'';
+  document.getElementById('supPhone').value=s?.phone||'';
+  document.getElementById('supRole').value=s?.role||'supervisor';
+  document.getElementById('supColor').value=s?.color||'#5B4FE8';
+  document.getElementById('supNotes').value=s?.notes||'';
+  document.getElementById('supCode').value=s?.code||genSupCode();
+  document.getElementById('supModalTitle').innerHTML=`<i class="fas fa-hard-hat" style="color:var(--primary);"></i> ${editId?'تعديل مشرف':'مشرف جديد'}`;
+  document.getElementById('supModal').style.display='flex';
+}
+function closeSupModal(){document.getElementById('supModal').style.display='none';}
+
+async function saveSupervisor(){
+  const name=document.getElementById('supName').value.trim();
+  if(!name){showToast('ادخل اسم المشرف','error');return;}
+  const editId=document.getElementById('supEditId').value;
+  const s={
+    id:editId||uid(),
+    name,
+    code:document.getElementById('supCode').value,
+    phone:document.getElementById('supPhone').value,
+    role:document.getElementById('supRole').value,
+    color:document.getElementById('supColor').value,
+    notes:document.getElementById('supNotes').value,
+    createdAt:editId?(getSup(editId)?.createdAt||new Date().toISOString()):new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  await dbPut(ST.SUPERVISORS,s);
+  if(editId){const i=supervisors.findIndex(x=>x.id===editId);if(i!==-1)supervisors[i]=s;}
+  else supervisors.push(s);
+  closeSupModal();
+  populateSupFilter();
+  renderCustodyList();
+  showToast(editId?'✓ تم تعديل المشرف':'✓ تم إضافة المشرف','success');
+}
+
+// ==================== STATEMENT ====================
+function openStatementModal(custodyId){
+  const c=getCustody(custodyId);if(!c)return;
+  const sup=getSup(c.supervisorId);
+  const{total,spent,remaining,recharges}=calcCustodyBalance(custodyId);
+  const txs=custodyTrans.filter(t=>t.custodyId===custodyId&&!t.deleted).sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  let runBal=parseFloat(c.amount||0);
+  const rows=txs.map(tx=>{
+    if(tx.type==='recharge') runBal+=parseFloat(tx.amount||0);
+    else runBal-=parseFloat(tx.amount||0);
+    const isSpend=tx.type==='spend';
+    const proj=getProj(tx.projectId);
+    return`<tr>
+      <td style="font-size:11px;">${fmtDate(tx.date)}</td>
+      <td>${tx.description||'—'}${proj?`<br><span style="font-size:10px;color:var(--primary);">${proj.name}</span>`:''}</td>
+      <td><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:${isSpend?'var(--danger-light)':'var(--success-light)'};color:${isSpend?'var(--danger)':'var(--success)'};">${isSpend?'صرف':'تعبئة'}</span></td>
+      <td style="font-weight:800;color:var(--danger);text-align:left;">${isSpend?fmt(tx.amount)+' ج.م':'—'}</td>
+      <td style="font-weight:800;color:var(--success);text-align:left;">${!isSpend?fmt(tx.amount)+' ج.م':'—'}</td>
+      <td style="font-weight:800;color:${runBal>=0?'var(--success)':'var(--danger)'};text-align:left;">${fmt(runBal)} ج.م</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('stmtBody').innerHTML=`
+    <div id="printArea">
+      <div style="background:linear-gradient(135deg,${sup?.color||'var(--warning)'},#F97316);color:white;padding:16px 20px;border-radius:var(--radius) var(--radius) 0 0;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:16px;font-weight:800;">كشف حساب عهدة</div>
+          <div style="font-size:12px;opacity:.8;">${sup?.name||'—'} — ${c.code}</div>
+          <div style="font-size:11px;opacity:.7;">${fmtDate(c.date)}</div>
+        </div>
+        <div style="text-align:left;">
+          <div style="font-size:11px;opacity:.7;">الرصيد المتبقي</div>
+          <div style="font-size:20px;font-weight:800;">${fmt(remaining)} ج.م</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--border);">
+        ${[
+          {l:'مبلغ العهدة',v:fmt(parseFloat(c.amount||0)),c:'var(--primary)'},
+          {l:'التعبئات',v:fmt(recharges),c:'var(--info)'},
+          {l:'المصروف',v:fmt(spent),c:'var(--danger)'},
+          {l:'المتبقي',v:fmt(remaining),c:remaining>=0?'var(--success)':'var(--danger)'},
+        ].map(x=>`<div style="padding:10px 14px;border-left:1px solid var(--border);text-align:center;"><div style="font-size:10px;color:var(--text-gray);">${x.l}</div><div style="font-size:14px;font-weight:800;color:${x.c};">${x.v} ج.م</div></div>`).join('')}
+      </div>
+      <div class="stmt-table" style="overflow-x:auto;max-height:400px;overflow-y:auto;">
+        <table><thead><tr><th>التاريخ</th><th>البيان</th><th>النوع</th><th>مصروف</th><th>تعبئة</th><th>الرصيد</th></tr></thead>
+        <tbody>${rows||`<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-gray);">لا توجد حركات</td></tr>`}</tbody></table>
+      </div>
+    </div>`;
+  document.getElementById('stmtModal').style.display='flex';
+}
+
+function printStatement(){
+  const content=document.getElementById('printArea')?.innerHTML||'';
+  const w=window.open('','_blank');
+  w.document.write(`<html dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:'Cairo',sans-serif;font-size:12px;}table{width:100%;border-collapse:collapse;}th,td{padding:7px 10px;border:1px solid #ddd;text-align:right;}th{background:#f5f5f5;}</style></head><body>${content}</body></html>`);
+  w.document.close();w.print();
+}
+
+// ==================== CODE GEN ====================
+function genCustodyCode(){return 'CST-'+(custodies.length+1).toString().padStart(4,'0');}
+function genSupCode(){return 'SUP-'+(supervisors.length+1).toString().padStart(4,'0');}
+function genSpendCode(){return 'EXP-'+Date.now().toString().slice(-6);}
+
+// ==================== POPULATE ====================
+function populateSupFilter(){
+  const sel=document.getElementById('filterSup');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">كل المشرفين</option>'+supervisors.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  sel.value=cur;
+}
+
+// ==================== TOAST ====================
+function showToast(msg,type='success'){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  const icons={success:'fa-check-circle',error:'fa-times-circle',warning:'fa-exclamation-triangle'};
+  t.innerHTML=`<i class="fas ${icons[type]||'fa-info-circle'}"></i> ${msg}`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2500);
+}
+
+// ==================== SEED ====================
+async function seedIfEmpty(){
+  if(supervisors.length>0)return;
+  const sups=[
+    {id:'sup_1',name:'محمد إبراهيم',code:'SUP-0001',phone:'01012345678',role:'supervisor',color:'#5B4FE8',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'sup_2',name:'أحمد السيد',code:'SUP-0002',phone:'01098765432',role:'engineer',color:'#22C55E',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'sup_3',name:'خالد حسن',code:'SUP-0003',phone:'01155443322',role:'foreman',color:'#F59E0B',notes:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const s of sups)await dbPut(ST.SUPERVISORS,s);
+  supervisors=[...sups];
+
+  const projIds=projects.slice(0,2).map(p=>p.id);
+  const csts=[
+    {id:'cst_1',code:'CST-0001',supervisorId:'sup_1',date:new Date().toISOString().split('T')[0],amount:30000,maxSpend:null,treasuryId:null,projectIds:projIds,notes:'عهدة الشهر الأول',status:'open',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'cst_2',code:'CST-0002',supervisorId:'sup_2',date:new Date(Date.now()-7*86400000).toISOString().split('T')[0],amount:15000,maxSpend:null,treasuryId:null,projectIds:projIds.slice(0,1),notes:'',status:'open',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:'cst_3',code:'CST-0003',supervisorId:'sup_3',date:new Date(Date.now()-30*86400000).toISOString().split('T')[0],amount:10000,maxSpend:null,treasuryId:null,projectIds:[],notes:'',status:'closed',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const c of csts)await dbPut(ST.CUSTODIES,c);
+  custodies=[...csts];
+
+  const today=new Date().toISOString().split('T')[0];
+  const txs=[
+    {id:uid(),type:'spend',custodyId:'cst_1',description:'شراء مواد كهربائية',amount:4500,projectId:projIds[0]||null,catId:null,date:today,refNo:'INV-101',notes:null,code:'EXP-001',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:uid(),type:'spend',custodyId:'cst_1',description:'أجرة نقل مواد',amount:1200,projectId:projIds[0]||null,catId:null,date:today,refNo:null,notes:null,code:'EXP-002',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:uid(),type:'spend',custodyId:'cst_1',description:'وجبات عمال موقع',amount:800,projectId:projIds[1]||null,catId:null,date:today,refNo:null,notes:null,code:'EXP-003',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:uid(),type:'recharge',custodyId:'cst_1',description:'تعبئة عهدة',amount:5000,date:today,notes:'تعبئة إضافية',code:'RCH-001',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:uid(),type:'spend',custodyId:'cst_2',description:'مستلزمات موقع',amount:3000,projectId:projIds[0]||null,catId:null,date:today,refNo:null,notes:null,code:'EXP-004',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+    {id:uid(),type:'spend',custodyId:'cst_3',description:'مصروفات مغلقة',amount:9500,projectId:null,catId:null,date:new Date(Date.now()-30*86400000).toISOString().split('T')[0],refNo:null,notes:null,code:'EXP-005',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  ];
+  for(const t of txs)await dbPut(ST.CUSTODY_TRANS,t);
+  custodyTrans=[...txs];
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded',async()=>{
+  try{
+    await initDB();
+    const settings=await dbGetK(ST.SETTINGS,'main');
+    if(settings?.company?.name){document.getElementById('sCompanyName').textContent=settings.company.name;document.getElementById('sLogoIcon').textContent=settings.company.name.charAt(0);}
+    categories=await dbAll(ST.CATS);
+    projects=await dbAll(ST.PROJECTS);
+    treasuries=await dbAll(ST.TREASURIES);
+    supervisors=await dbAll(ST.SUPERVISORS);
+    custodies=await dbAll(ST.CUSTODIES);
+    custodyTrans=await dbAll(ST.CUSTODY_TRANS);
+    await seedIfEmpty();
+    populateSupFilter();
+    updateStats();
+    renderCustodyList();
+  }catch(e){showToast('خطأ في التحميل','error');console.error(e);}
+});
+</script>
+</body>
+</html>
